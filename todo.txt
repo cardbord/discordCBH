@@ -1,3 +1,8 @@
 What we have to do:
 1. Eat cheese
-2. 
+2. make some sort of context management
+3. make commands
+4. make a system of pushing commands to discord
+5. make networks
+6. make localhost
+7. make inbuilt localhost functions
