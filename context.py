@@ -4,16 +4,18 @@ import datetime
 import typing
 from warnings import warn
 from discord.utils import snowflake_time
-import errors
+import errors, add_command
 
 
 
 class Context:
     def __init__(self,
+                 _http:add_command.DiscordRequest,
                  _command_json:dict,
                  _discord_client:typing.Union[discord.Client,commands.Bot],
                  log
                  ):
+        
         self._full_command_json = _command_json
         self._token = _command_json["token"]
         self.message = None
