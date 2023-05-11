@@ -43,7 +43,7 @@ class Context:
         If a command was invoked in a DM, then this is ``None``
         """
         
-        return self.bot.get_guild(self.guild_id) if self.guild_id else None
+        return self.bot.get_guild(self.guild_id) if self.guild_id!=None else None
     
     @property
     def channel(self) -> typing.Optional[typing.Union[discord.TextChannel,discord.DMChannel]]:
