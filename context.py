@@ -76,18 +76,29 @@ class Context:
     async def send(self,
                 content:str="",
                 *,
-                embed:discord.Embed=None,
+                embeds: typing.List[discord.Embed]=None,
                 tts:bool=False,
-                file:discord.File=None,
+                files: typing.List[discord.File]=None,
                 allowed_mentions:discord.AllowedMentions=None,
                 hidden:bool=False,
                 delete_after:float=None,
                 components:typing.List[dict] = None,
                    ):
-        if embed:
-            embeds = [embed]
-        if not isinstance(embeds,list):
-            raise errors.IncorrectFormat("No embed passed")
         
+
+        if hidden is True and delete_after != None:
+            raise errors.IncorrectFormat("A hidden message cannot be deleted.")
+
+        if embeds != None:
+            if not isinstance(embeds,list):
+                raise errors.IncorrectFormat("No embeds passed.")
+            elif len(embeds) > 10:
+                raise errors.IncorrectFormat(f"Cannot pass more than 10 embeds. Please remove {len(embeds)-10} embeds.")
+        if files != None:
+            if not isinstance(files,list):
+                raise errors.IncorrectFormat("No files passed.")
+        
+
+
         #UNFINISHED. DO LATER.
         
