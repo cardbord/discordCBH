@@ -5,6 +5,11 @@ What we have to do:
 2. make some sort of context management
     -class, referenced in commands
     -contains user, server, channel, (if voice maybe if needed, need to read dc docs to see properly)
+    
+    
+    -doing this rn, do half of step 4 (add_command.py) for posts/edits -cardbord
+
+
 3. make commands
     -function decorator 'command', wraps functs and allat
     -i'll just borrow syntax from catchers extdpy module because thats pretty snazzy
@@ -32,7 +37,3 @@ What we have to do:
     -will take a while lol
     -make a functioning bot using all basic commands
     -test localhost terminal
-
-
-
-updated todo -cardbord
