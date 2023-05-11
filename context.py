@@ -94,10 +94,27 @@ class Context:
                 raise errors.IncorrectFormat("No embeds passed.")
             elif len(embeds) > 10:
                 raise errors.IncorrectFormat(f"Cannot pass more than 10 embeds. Please remove {len(embeds)-10} embeds.")
+            else:
+                for i in embeds:
+                    i.to_dict()
         if files != None:
             if not isinstance(files,list):
                 raise errors.IncorrectFormat("No files passed.")
         
+
+
+        mes_json = {
+            "content":content,
+            "tts":tts,
+            "embeds":embeds if embeds else [],
+            "allowed_mentions":allowed_mentions,
+            "components":components or [],
+        }
+        if hidden != None:
+            mes_json["flags"] = 64
+        
+        #need to write add_command.py before the rest of send() for http posts lol
+
 
 
         #UNFINISHED. DO LATER.
