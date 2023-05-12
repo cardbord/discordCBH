@@ -1,5 +1,5 @@
 import uuid
-
+from ..errors import IncorrectFormat
 '''Text inputs deprecated in favour of dPY's version. Please read dPY's
 documentation on how to implement them.
 
@@ -78,8 +78,39 @@ class PartialEmoji:
     def __repr__(self):
         return {"name":f"{self.name}","id":f"{self.id}","animated":f"{str(self.animated).lower()}"}
     
+class Button:
+    def __init__(self,style:int=1,label:str="",emoji:PartialEmoji=None,disabled:bool=False,url:str=None):
+        self.style = style
+        self.label = label
+        self.emoji = emoji
+        self.disabled = disabled
 
-def create_button(style:int=1,label:str=None,emoji:PartialEmoji=None,custom_id:str=None,url:str=None,disabled:bool=False) -> dict:
+    @property
+    def custom_id(self) -> str:
+        return str(uuid.uuid4())
+
+    @property
+    def button_json(self) -> dict:
+
+        data = {
+        "type":2,
+        "style":self.style,
+        }
+        if self.label != None:
+            data["label"] = self.label
+        if self.emoji != None:
+            data["emoji"] = self.emoji
+        if self.disabled:
+            data["disabled"] = self.disabled
+        if self.style == 5:
+            data["url"] = self.url    
+        else:
+            data["custom_id"] = self.custom_id
+
+        return data
+    
+
+def create_button(style:int=1,label:str=None,emoji:PartialEmoji=None,custom_id:str=None,url:str=None,disabled:bool=False) -> Button:
     '''
     returns a button component
 
@@ -105,11 +136,11 @@ def create_button(style:int=1,label:str=None,emoji:PartialEmoji=None,custom_id:s
     if disabled:
         data["disabled"] = disabled
     if style == 5:
-        data["url"] = url
+        data["url"] = url    
     else:
         data["custom_id"] = custom_id or str(uuid.uuid4())
 
-    return data
+    return Button()
 
 def actionrow(*components) -> dict:
 
