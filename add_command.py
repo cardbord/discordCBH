@@ -35,10 +35,11 @@ class DiscordRequest:
             modify_method,
             interaction_id,
             location="",
+            **kwargs
     ):
         url = f"/interactions/{interaction_id}/{token}/callback"
         url+=location
-        return self._discord_client.http.request(Route(modify_method,url))
+        return self._discord_client.http.request(Route(modify_method,url),**kwargs)
 
 
         #FINISH LATER. TOO TIRED TO DO NOW.
@@ -62,3 +63,5 @@ class DiscordRequest:
     
     def post_initial_response(self,_resp,interaction_id,token):
         return self.command_request(token,"POST",interaction_id,json=_resp)
+    
+    
