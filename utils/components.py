@@ -84,6 +84,7 @@ class Button:
         self.label = label
         self.emoji = emoji
         self.disabled = disabled
+        self.url = url
 
     @property
     def custom_id(self) -> str:
@@ -103,7 +104,12 @@ class Button:
         if self.disabled:
             data["disabled"] = self.disabled
         if self.style == 5:
-            data["url"] = self.url    
+            if self.url is None:
+                raise IncorrectFormat("Button style is 5 without a URL specified.")
+            else:
+                data["url"] = self.url
+            
+
         else:
             data["custom_id"] = self.custom_id
 
