@@ -44,8 +44,6 @@ class DiscordRequest:
         return self._discord_client.http.request(Route(modify_method,url),**kwargs)
 
 
-        #FINISH LATER. TOO TIRED TO DO NOW.
-
 
     def add_slash_command(self,
                             guild_id,
