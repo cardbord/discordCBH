@@ -37,3 +37,12 @@ What we have to do:
     -will take a while lol
     -make a functioning bot using all basic commands
     -test localhost terminal
+
+OTHER IDEAS:
+-components.py from extDPY (basically done now)
+    -update, fix, improve
+    -create substitutes for goofy json creation functions
+
+-webhooks.py from extDPY
+    -update, fix, improve
+    -fix odd token management (probs just require context for ez fix)
