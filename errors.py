@@ -10,5 +10,7 @@ class IncorrectFormat(CommandError):
     """
     The object format was incorrect
     """
-
-
+class HTTPError(CommandError):
+    """
+    The command request failed
+    """
