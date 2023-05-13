@@ -29,15 +29,17 @@ class DiscordRequest:
         return self._discord_client.http.request(Route(modify_method,url))
     
 
-    def command_request(
+    def command_response(
             self,
             token,
+            use_webhook,
             modify_method,
             interaction_id,
             location="",
             **kwargs
     ):
-        url = f"/interactions/{interaction_id}/{token}/callback"
+        url = f"/interactions/{interaction_id}/{token}/callback" if use_webhook is False else f"/webhooks/{self.application_id}/{token}"
+
         url+=location
         return self._discord_client.http.request(Route(modify_method,url),**kwargs)
 
@@ -61,7 +63,21 @@ class DiscordRequest:
             return self.send_http(json=new_cmdjson,modify_method="POST",guild_id=guild_id)
         return self.send_http(json=cmdjson,modify_method="POST",guild_id=guild_id)
     
+    def request_with_files(self,_resp,files:typing.List[discord.File],token,modify_method,location=""):
+        form = aiohttp.FormData()
+        form.add_field("payload_json",json.dumps(_resp))
+        for i in range(len(files)):
+            name = f"file{i if len(files) > 1 else ''}"
+            bru = files[i]
+            form.add_field(name,bru.fp,filename=bru.filename,content_type="application/octet-stream")
+        
+        return self.command_response(token,True,modify_method,data=form,files=files,location=location)
+    
+    
+    
     def post_initial_response(self,_resp,interaction_id,token):
-        return self.command_request(token,"POST",interaction_id,json=_resp)
+        return self.command_response(token,"POST",interaction_id,json=_resp)
     
-    
+    def post_second(self,_resp,token,files:typing.List[discord.File]=None):
+        if files != None:
+            return self.request_with_files(_resp,files,token,"POST")
