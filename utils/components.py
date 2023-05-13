@@ -35,11 +35,15 @@ File to easily create JSON for message components.
 
 
 ::Example with 2 buttons, discord.py command::
+
+import discord
+from discordcbh.utils.components import Button, actionrow
+
 @client.command()
 async def blurple_and_danger(ctx):
     buttons = [
-        create_button(style=1,label="blurple",custom_id="blurple"),
-        create_button(style=4,label="danger",custom_id="danger")
+        Button(style=1,label="blurple"),
+        Button(style=4,label="danger")
         ]
     action_row=actionrow(*buttons)
    
@@ -47,20 +51,19 @@ async def blurple_and_danger(ctx):
 
     button_response = await client.wait_for('component')
     
-    if button_response.custom_id == "blurple":
+    if button_response.custom_id == buttons[0].custom_id:
         await button_response.send("you clicked blurple!")
-    if button_response.custom_id == "danger":
+    if button_response.custom_id == buttons[1].custom_id:
         await button_response.send("you clicked danger!")
     
     buttons = [
-        create_button(style=1,label="blurple",disabled=True),
-        create_button(style=4,label="danger",disabled=True)
+        Button(style=1,label="blurple",disabled=True),
+        Button(style=4,label="danger",disabled=True)
         ]
     action_row=actionrow(*buttons)
 
 
     await message.edit(content="Sorry, someone has done this command!",components=[action_row])
-
 
 
 '''
@@ -79,6 +82,18 @@ class PartialEmoji:
         return {"name":f"{self.name}","id":f"{self.id}","animated":f"{str(self.animated).lower()}"}
     
 class Button:
+
+    r"""returns a button component
+
+    params:
+    style(int) = the style of the button, can be found here https://discord.com/developers/docs/interactions/message-components#buttons 
+    label(str) = label on the button
+    emoji(PartialEmoji) = emoji to display on the button
+    url(str) = (only required if style is 5), any URL 
+    disabled(bool) = whether the button is disabled or not
+    """
+
+
     def __init__(self,style:int=1,label:str="",emoji:PartialEmoji=None,disabled:bool=False,url:str=None):
         self.style = style
         self.label = label
@@ -100,33 +115,27 @@ class Button:
         if self.label != None:
             data["label"] = self.label
         if self.emoji != None:
-            data["emoji"] = self.emoji
-        if self.disabled:
-            data["disabled"] = self.disabled
+            data["emoji"] = self.emoji     
         if self.style == 5:
             if self.url is None:
                 raise IncorrectFormat("Button style is 5 without a URL specified.")
             else:
                 data["url"] = self.url
-            
-
+        if self.disabled:
+            data["disabled"] = self.disabled    
         else:
             data["custom_id"] = self.custom_id
 
         return data
     
+    def __repr__(self):
+        return self.button_json
 
 def create_button(style:int=1,label:str=None,emoji:PartialEmoji=None,custom_id:str=None,url:str=None,disabled:bool=False) -> Button:
     '''
-    returns a button component
+    returns json for a button
 
-    params:
-    style(int) = the style of the button, can be found here https://discord.com/developers/docs/interactions/message-components#buttons 
-    label(str) = label on the button
-    emoji(PartialEmoji) = emoji to display on the button
-    custom_id(str) = the ID for the button; this is advised if using multiple buttons in the same routine
-    url(str) = (only required if style is 5), any URL 
-    disabled(bool) = whether the button is disabled or not
+    deprecated, please use ``Button`` instead.
 
     '''
     
@@ -139,14 +148,17 @@ def create_button(style:int=1,label:str=None,emoji:PartialEmoji=None,custom_id:s
         data["label"] = label
     if emoji != None:
         data["emoji"] = emoji
+    if style == 5:
+        if url is None:
+            raise IncorrectFormat("Button style is 5 without a URL specified.")
+        else:
+            data["url"] = url
     if disabled:
         data["disabled"] = disabled
-    if style == 5:
-        data["url"] = url    
     else:
         data["custom_id"] = custom_id or str(uuid.uuid4())
 
-    return Button()
+    return data
 
 def actionrow(*components) -> dict:
 
