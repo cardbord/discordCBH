@@ -4,18 +4,18 @@ import datetime
 import typing
 from warnings import warn
 from discord.utils import snowflake_time
-import errors, add_command
-
+import errors
+import add_command as http
 
 
 class Context:
     def __init__(self,
-                 _http:add_command.DiscordRequest,
+                 _http:http.DiscordRequest,
                  _command_json:dict,
                  _discord_client:typing.Union[discord.Client,commands.Bot],
                  log
                  ):
-        
+        self._http = _http
         self._full_command_json = _command_json
         self._token = _command_json["token"]
         self.message = None
@@ -102,9 +102,6 @@ class Context:
         if files != None:
             if not isinstance(files,list):
                 raise errors.IncorrectFormat("No files passed.")
-        
-
-
         mes_json = {
             "content":content,
             "tts":tts,
@@ -114,9 +111,16 @@ class Context:
         }
         if hidden != None:
             mes_json["flags"] = 64
-        
-        #need to write add_command.py before the rest of send() for http posts lol
 
+        initial = True if self.responded else False
+        if initial:
+            jsond = {"type":4,"data":mes_json}
+
+            await self._http.post_initial_response(jsond,self.interaction_id,self._token)
+        
+
+        
+    
 
 
         #UNFINISHED. DO LATER.
