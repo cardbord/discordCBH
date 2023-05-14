@@ -34,7 +34,7 @@ class DiscordRequest:
             token,
             use_webhook,
             modify_method,
-            interaction_id,
+            interaction_id=None,
             location="",
             **kwargs
     ):
@@ -74,8 +74,16 @@ class DiscordRequest:
     
     
     def post_initial_response(self,_resp,interaction_id,token):
-        return self.command_response(token,"POST",interaction_id,json=_resp)
+        return self.command_response(token,False,"POST",interaction_id,json=_resp)
     
     def post_second(self,_resp,token,files:typing.List[discord.File]=None):
         if files != None:
             return self.request_with_files(_resp,files,token,"POST")
+        else:
+            return self.command_response(token,True,"POST",json=_resp)
+    def patch(self,_resp,token,message_id,files:typing.List[discord.File]=None):
+        url = f"/messages/{message_id}"
+        if files != None:
+            return self.request_with_files(_resp,files,token,"PATCH",url)
+        else:
+            return self.command_response(token,True,"PATCH",location=url,json=_resp)
