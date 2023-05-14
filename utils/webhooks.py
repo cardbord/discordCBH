@@ -26,7 +26,7 @@ exist, or may not be included in the library.
 """
 
 import aiohttp, requests
-from errors import raise_error, read_json_for_errors
+from errors import HTTPError
 
 
 class webhook:
@@ -71,11 +71,11 @@ class webhook:
             if session.status in range(200,299):
                 await self.client.session.close()
                 return
-            raise_error(session.status)
-            jso = await session.text
-            read_json_for_errors(jso)
+            
             await self.client.session.close()
-            return
+            raise HTTPError(f"command failed with code {session.status}")
+            
+            
             
 
     async def edit_message(self,*,message_id:int,content:str):
@@ -87,9 +87,9 @@ class webhook:
             if session.status in range(200,299):
                 await self.client.session.close()
                 return
-            raise_error(session.status)
+            
             await self.client.session.close()
-            return
+            raise HTTPError(f"command failed with code {session.status}")
 
     async def delete_message(self,*,message_id:int):
         self.client.session = aiohttp.ClientSession()
@@ -99,9 +99,10 @@ class webhook:
             if session.status == 204:
                 await self.client.session.close()
                 return
-            raise_error(session.status)
+            
             await self.client.session.close()
-            return
+            raise HTTPError(f"command failed with code {session.status}")
+            
 
 
     async def modify(self,new_name:str=None,new_avatar:str=None,new_channel:int=None):
@@ -144,9 +145,9 @@ class webhook:
 
 
 
-            raise_error(session.status)
+            
             await self.client.session.close()
-            return None
+            raise HTTPError(f"command failed with code {session.status}")
 
 
 
@@ -203,12 +204,11 @@ class discord_webhooks:
                 webhook_token=webhook_status['token'],
             )
         
-        raise_error(r.status_code)
-        return None
+        raise HTTPError(f"command failed with code {r.status_code}")
 
 
 
-    async def create_webhook(self,*,channel_id:int,webhook_name:str):
+    async def create_webhook(self,*,channel_id:int,webhook_name:str) -> webhook:
 
         '''Creates a webhook from a provided channel ID and webhook name
         returns a webhook class on success'''
@@ -236,9 +236,9 @@ class discord_webhooks:
                 )
 
 
-            raise_error(session.status)
+            
             await self.client.session.close()
-            return None         
+            raise HTTPError(f"command failed with code {session.status}")         
   
 
     async def delete_webhook(self,*,webhook_id:int):
@@ -253,9 +253,9 @@ class discord_webhooks:
             if session.status == 204:
                 await self.client.session.close()
                 return
-            raise_error(session.status)
-            await self.client.session()
-            return 
+            
+            await self.client.session.close()
+            raise HTTPError(f"command failed with code {session.status}") 
 
 
 
@@ -268,8 +268,8 @@ class discord_webhooks:
         r=requests.get(f"https://discord.com/api/v9/channels/{channel_id}/webhooks",headers=headers)
         if r.status_code in range(200,299):
             return eval(r.text.replace('null','None').replace('true','True'))
-        raise_error(r.status_code)
-        return None
+        
+        raise HTTPError(f"command failed with code {r.status_code}")
 
     async def get_guild_webhooks(self,*,guild_id:int):
 
@@ -280,8 +280,7 @@ class discord_webhooks:
         r=requests.get(f"https://discord.com/api/v9/guilds/{guild_id}/webhooks",headers=headers)
         if r.status_code in range(200,299):
             return eval(r.text.replace('null','None').replace('true','True'))
-        raise_error(r.status_code)
-        return None
+        raise HTTPError(f"command failed with code {r.status_code}")
 
     async def webhook_from_name(self,*,channel_id:int,webhook_name:str):  
         
@@ -291,7 +290,6 @@ class discord_webhooks:
 
         current_webhooks = await discord_webhooks.get_channel_webhooks(self,channel_id=channel_id)
         for _ in current_webhooks:
-            userinfo = _['user']
             if str(_['name']) == webhook_name:
                 return webhook(
                     id=_['id'],
