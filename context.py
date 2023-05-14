@@ -85,7 +85,7 @@ class Context:
                 hidden:bool=False,
                 delete_after:float=None,
                 components:typing.List[dict] = None,
-                   ):
+                   ) -> typing.Union[discord.Message,dict]:
         
 
         if hidden is True and delete_after != None:
@@ -114,9 +114,13 @@ class Context:
 
         initial = True if self.responded else False
         if initial:
-            jsond = {"type":4,"data":mes_json}
+            if files == None:
+                jsond = {"type":4,"data":mes_json}
 
-            await self._http.post_initial_response(jsond,self.interaction_id,self._token)
+                await self._http.post_initial_response(jsond,self.interaction_id,self._token)
+                if hidden is False:
+                    resp = await self._http.patch({},self._token,"@original")
+
         
 
         
