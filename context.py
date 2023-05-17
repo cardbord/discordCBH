@@ -120,12 +120,50 @@ class Context:
                 await self._http.post_initial_response(jsond,self.interaction_id,self._token)
                 if hidden is False:
                     resp = await self._http.patch({},self._token,"@original")
+                else:
+                    resp = {}
+            self.responded = True
+        else:
+            resp = await self._http.post_second(mes_json,self._token,files)
+        discord_message = None
+        if not hidden:
+            discord_message = discord.Message(
+                state=self.bot._connection,
+                data=resp,
+                channel=self.channel,
+                
+            )
+        if discord_message:
 
-        
-
+            return discord_message
+        else:
+            return resp
         
     
 
 
-        #UNFINISHED. DO LATER.
-        
+    async def reply(self,
+                    content:str="",
+                    *,
+                    embeds:typing.List[discord.Embed]=None,
+                    tts:bool=False,
+                    files:typing.List[discord.File]=None,
+                    allowed_mentions:discord.AllowedMentions=None,
+                    hidden:bool=False,
+                    delete_after:float=None,
+                    components:typing.List[dict]=None,
+                    ) -> typing.Union[discord.Message,dict]:
+        return await self.send(content,embeds=embeds,tts=tts,files=files,allowed_mentions=allowed_mentions,hidden=hidden,delete_after=delete_after,components=components)
+
+    async def say(self,
+                    content:str="",
+                    *,
+                    embeds:typing.List[discord.Embed]=None,
+                    tts:bool=False,
+                    files:typing.List[discord.File]=None,
+                    allowed_mentions:discord.AllowedMentions=None,
+                    hidden:bool=False,
+                    delete_after:float=None,
+                    components:typing.List[dict]=None,
+                    ) -> typing.Union[discord.Message,dict]:
+        return await self.send(content,embeds=embeds,tts=tts,files=files,allowed_mentions=allowed_mentions,hidden=hidden,delete_after=delete_after,components=components)
