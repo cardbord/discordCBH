@@ -1,14 +1,14 @@
-What we have to do:
+DONE!
 1. Eat cheese
     -maintaining high calcium levels is important for bone structure
     -don't workout properly anyway so this is necessary
-2. make some sort of context management
+2. make some sort of context management 
     -class, referenced in commands
     -contains user, server, channel, (if voice maybe if needed, need to read dc docs to see properly)
-    
-    
-    -doing this rn, do half of step 4 (add_command.py) for posts/edits -cardbord
 
+
+
+What we have to do:
 
 3. make commands
     -function decorator 'command', wraps functs and allat
