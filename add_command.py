@@ -1,7 +1,6 @@
 import json, typing, discord, aiohttp
 from discord.ext import commands
 from discord.http import Route
-import errors
 
 class DiscordRequest:
     def __init__(self,
