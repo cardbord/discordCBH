@@ -25,9 +25,9 @@ An extension to the discord.py library, bringing some features that do not
 exist, or may not be included in the library. 
 """
 
-import aiohttp, requests
+import aiohttp, requests, typing
 from errors import HTTPError
-
+from ..context import Context
 
 class webhook:
     '''Represents a discord webhook
@@ -42,7 +42,7 @@ class webhook:
 
     '''
 
-    def __init__(self,id,type,guild_id,channel_id,name,application_id,webhook_token,avatar):
+    def __init__(self,id,type,guild_id,channel_id,name,application_id,webhook_token,avatar,token):
         self.webhook_id = id
         self.webook_type = type
         self.channel_id = channel_id
@@ -51,14 +51,13 @@ class webhook:
         self.guild = guild_id
         self.token = webhook_token
         self.avatar = avatar
-        self.client_token = tooken
-        self.client = clientses
+        self.client_token = token
         
 
 
 
     async def execute(self,*,content:str,username:str=None, avatar_url:str):
-        self.client.session = aiohttp.ClientSession()
+        client = aiohttp.ClientSession()
         if username is None:
             username = self.name
         url = f"https://discord.com/api/v9/webhooks/{self.webhook_id}/{self.token}"
@@ -67,40 +66,40 @@ class webhook:
         'username':username,
         'avatar_url':avatar_url
         }
-        async with self.client.session.post(url,headers=headers,json=json) as session:
+        async with client.post(url,headers=headers,json=json) as session:
             if session.status in range(200,299):
-                await self.client.session.close()
+                await client.close()
                 return
             
-            await self.client.session.close()
+            await client.close()
             raise HTTPError(f"command failed with code {session.status}")
             
             
             
 
     async def edit_message(self,*,message_id:int,content:str):
-        self.client.session = aiohttp.ClientSession()
+        client = aiohttp.ClientSession()
         url = f"https://discord.com/api/v9/webhooks/{self.webhook_id}/{self.token}/messages/{message_id}"
         headers = {"Authorization": f"Bot {self.client_token}"}
         json = {'content':content}
-        async with self.client.session.patch(url,headers=headers,json=json) as session:
+        async with client.patch(url,headers=headers,json=json) as session:
             if session.status in range(200,299):
-                await self.client.session.close()
+                await client.close()
                 return
             
-            await self.client.session.close()
+            await client.close()
             raise HTTPError(f"command failed with code {session.status}")
 
     async def delete_message(self,*,message_id:int):
-        self.client.session = aiohttp.ClientSession()
+        client = aiohttp.ClientSession()
         url = f"https://discord.com/api/v9/webhooks/{self.webhook_id}/{self.token}/messages/{message_id}"
         headers = {"Authorization": f"Bot {self.client_token}"}
-        async with self.client.session.delete(url,headers=headers) as session:
+        async with client.delete(url,headers=headers) as session:
             if session.status == 204:
-                await self.client.session.close()
+                await client.close()
                 return
             
-            await self.client.session.close()
+            await client.close()
             raise HTTPError(f"command failed with code {session.status}")
             
 
@@ -110,7 +109,7 @@ class webhook:
         '''Modifies an existing webhook with a new name, avatar and channel, provided a webhook ID is given
         returns a new webhook class on success'''
         
-        self.client.session = aiohttp.ClientSession()
+        client = aiohttp.ClientSession()
         url = f"https://discord.com/api/v9/webhooks/{self.webhook_id}"
 
         params = [new_name,new_avatar,new_channel]
@@ -127,11 +126,11 @@ class webhook:
         'avatar?':params[1],
         'channel_id':params[2]
         }
-        async with self.client.session.post(url,headers=headers,json=json) as session:
+        async with client.post(url,headers=headers,json=json) as session:
             if session.status in range(200,299):
                 webhook_status = await session.text()
                 webhook_status = eval(webhook_status.replace('null','None').replace('true','True'))
-                await self.client.session.close()
+                await client.close()
                 return webhook(
                     id=webhook_status['id'],
                     type=webhook_status['type'],
@@ -146,53 +145,60 @@ class webhook:
 
 
             
-            await self.client.session.close()
+            await client.close()
             raise HTTPError(f"command failed with code {session.status}")
 
 
 
 
-class discord_webhooks:
 
-    '''Creates and manages webhooks for channels and guilds
-    
-    uses GET, POST, DELETE requests to manipulate webhooks from discord's API
-
-    requires [MANAGE_WEBHOOKS] permissions
-
-    discord_webhooks.get_webhook(webhook_id) -> webhook
-    discord_webhooks.create_webhook(channel_id,webhook_name) -> webhook
-    discord_webhooks.delete_webhook(webhook_id) -> None
-    discord_webhooks.get_channel_webhooks(channel_id) -> arr
-    discord_webhooks.get_guild_webhooks(guild_id) -> arr
-    discord_webhooks.webhook_from_name(channel_id,webhook_name) -> webhook
-
-    any failure in any of these functions will return None, promptly resulting in a NoneType error if manipulated. 
-
-    '''
-
-    def __init__(self,client,token):
-        self.client = client     
-        self.token = token
-        global tooken
-        tooken = self.token
-        global clientses
-        clientses = self.client
         
 
 
-    async def get_webhook(self,webhook_id:int):
+async def get_webhook(ctx:Context,webhook_id:int) -> typing.Optional[webhook]:
 
-        '''Gets webhook from ID
-        returns a webhook class on success'''
+    '''Gets webhook from ID
+    returns a webhook class on success'''
 
 
-        headers = {"Authorization": f"Bot {self.token}"}
-        r=requests.get(f"https://discord.com/api/v9/webhooks/{webhook_id}",headers=headers)
-        if r.status_code in range(200,299):
-            webhook_status = await r.text()
+    headers = {"Authorization": f"Bot {ctx._token}"}
+    r=requests.get(f"https://discord.com/api/v9/webhooks/{webhook_id}",headers=headers)
+    if r.status_code in range(200,299):
+        webhook_status = await r.text()
+        webhook_status = eval(webhook_status.replace('null','None').replace('true','True'))
+        
+        return webhook(
+            id=webhook_status['id'],
+            type=webhook_status['type'],
+            guild_id=webhook_status['guild_id'],
+            channel_id=webhook_status['channel_id'],
+            name=webhook_status['name'],
+            avatar=webhook_status['avatar'],
+            application_id=webhook_status['application_id'],
+            webhook_token=webhook_status['token'],
+            token=ctx._token
+        )
+    
+    raise HTTPError(f"command failed with code {r.status_code}")
+
+
+
+async def create_webhook(ctx:Context,*,channel_id:int,webhook_name:str) -> typing.Optional[webhook]:
+
+    '''Creates a webhook from a provided channel ID and webhook name
+    returns a webhook class on success'''
+    
+    client = aiohttp.ClientSession()
+    url = f"https://discord.com/api/v9/channels/{channel_id}/webhooks"
+    headers = {"Authorization": f"Bot {ctx._token}"}
+    json = {'name':webhook_name,
+    'avatar?':None
+    }
+    async with client.post(url,headers=headers,json=json) as session:
+        if session.status in range(200,299):
+            webhook_status = await session.text()
             webhook_status = eval(webhook_status.replace('null','None').replace('true','True'))
-            
+            await client.close()
             return webhook(
                 id=webhook_status['id'],
                 type=webhook_status['type'],
@@ -202,103 +208,74 @@ class discord_webhooks:
                 avatar=webhook_status['avatar'],
                 application_id=webhook_status['application_id'],
                 webhook_token=webhook_status['token'],
+                token=ctx._token
             )
+
+
         
-        raise HTTPError(f"command failed with code {r.status_code}")
+        await client.close()
+        raise HTTPError(f"command failed with code {session.status}")         
 
 
+async def delete_webhook(ctx:Context,*,webhook_id:int):
 
-    async def create_webhook(self,*,channel_id:int,webhook_name:str) -> webhook:
+    '''Deletes an existing webhook given the ID
+    returns a status 204 (no content) if successful (the program will manage this for you)'''
 
-        '''Creates a webhook from a provided channel ID and webhook name
-        returns a webhook class on success'''
+    client = aiohttp.ClientSession()
+    url = f"https://discord.com/api/v9/webhooks/{webhook_id}"
+    headers = {"Authorization": f"Bot {ctx._token}"}
+    async with client.delete(url,headers=headers) as session:
+        if session.status == 204:
+            await client.close()
+            return
         
-        self.client.session = aiohttp.ClientSession()
-        url = f"https://discord.com/api/v9/channels/{channel_id}/webhooks"
-        headers = {"Authorization": f"Bot {self.token}"}
-        json = {'name':webhook_name,
-        'avatar?':None
-        }
-        async with self.client.session.post(url,headers=headers,json=json) as session:
-            if session.status in range(200,299):
-                webhook_status = await session.text()
-                webhook_status = eval(webhook_status.replace('null','None').replace('true','True'))
-                await self.client.session.close()
-                return webhook(
-                    id=webhook_status['id'],
-                    type=webhook_status['type'],
-                    guild_id=webhook_status['guild_id'],
-                    channel_id=webhook_status['channel_id'],
-                    name=webhook_status['name'],
-                    avatar=webhook_status['avatar'],
-                    application_id=webhook_status['application_id'],
-                    webhook_token=webhook_status['token'],
-                )
-
-
-            
-            await self.client.session.close()
-            raise HTTPError(f"command failed with code {session.status}")         
-  
-
-    async def delete_webhook(self,*,webhook_id:int):
-
-        '''Deletes an existing webhook given the ID
-        returns a status 204 (no content) if successful (the program will manage this for you)'''
-
-        self.client.session = aiohttp.ClientSession()
-        url = f"https://discord.com/api/v9/webhooks/{webhook_id}"
-        headers = {"Authorization": f"Bot {self.token}"}
-        async with self.client.session.delete(url,headers=headers) as session:
-            if session.status == 204:
-                await self.client.session.close()
-                return
-            
-            await self.client.session.close()
-            raise HTTPError(f"command failed with code {session.status}") 
+        await client.close()
+        raise HTTPError(f"command failed with code {session.status}") 
 
 
 
-    async def get_channel_webhooks(self,*,channel_id:int):
+async def get_channel_webhooks(ctx:Context,*,channel_id:int)-> typing.Optional[list]:
 
-        '''Requests existing webhooks from a specific channel, given the channel ID
-        returns an array on success'''
+    '''Requests existing webhooks from a specific channel, given the channel ID
+    returns an array on success'''
 
-        headers = {"Authorization": f"Bot {self.token}"}
-        r=requests.get(f"https://discord.com/api/v9/channels/{channel_id}/webhooks",headers=headers)
-        if r.status_code in range(200,299):
-            return eval(r.text.replace('null','None').replace('true','True'))
-        
-        raise HTTPError(f"command failed with code {r.status_code}")
+    headers = {"Authorization": f"Bot {ctx._token}"}
+    r=requests.get(f"https://discord.com/api/v9/channels/{channel_id}/webhooks",headers=headers)
+    if r.status_code in range(200,299):
+        return eval(r.text.replace('null','None').replace('true','True'))
+    
+    raise HTTPError(f"command failed with code {r.status_code}")
 
-    async def get_guild_webhooks(self,*,guild_id:int):
+async def get_guild_webhooks(ctx:Context,*,guild_id:int)-> typing.Optional[list]:
 
-        '''Requests existing webhooks from a specific guild, given the guild ID
-        returns an array on success'''
+    '''Requests existing webhooks from a specific guild, given the guild ID
+    returns an array on success'''
 
-        headers = {"Authorization": f"Bot {self.token}"}
-        r=requests.get(f"https://discord.com/api/v9/guilds/{guild_id}/webhooks",headers=headers)
-        if r.status_code in range(200,299):
-            return eval(r.text.replace('null','None').replace('true','True'))
-        raise HTTPError(f"command failed with code {r.status_code}")
+    headers = {"Authorization": f"Bot {ctx._token}"}
+    r=requests.get(f"https://discord.com/api/v9/guilds/{guild_id}/webhooks",headers=headers)
+    if r.status_code in range(200,299):
+        return eval(r.text.replace('null','None').replace('true','True'))
+    raise HTTPError(f"command failed with code {r.status_code}")
 
-    async def webhook_from_name(self,*,channel_id:int,webhook_name:str):  
-        
-        '''Requests existing webhooks using get_channel_webhooks and then searching the JSON data for the webhook required
-        returns webhook on success'''
+async def webhook_from_name(ctx:Context,*,channel_id:int,webhook_name:str)-> typing.Optional[webhook]:  
+    
+    '''Requests existing webhooks using get_channel_webhooks and then searching the JSON data for the webhook required
+    returns webhook on success'''
 
 
-        current_webhooks = await discord_webhooks.get_channel_webhooks(self,channel_id=channel_id)
-        for _ in current_webhooks:
-            if str(_['name']) == webhook_name:
-                return webhook(
-                    id=_['id'],
-                    type=_['type'],
-                    guild_id=_['guild_id'],
-                    channel_id=_['channel_id'],
-                    name=_['name'],
-                    application_id=_['application_id'],
-                    webhook_token=_['token'],
-                    avatar=_['avatar']
-                )
-        return None
+    current_webhooks = await get_channel_webhooks(ctx,channel_id=channel_id)
+    for _ in current_webhooks:
+        if str(_['name']) == webhook_name:
+            return webhook(
+                id=_['id'],
+                type=_['type'],
+                guild_id=_['guild_id'],
+                channel_id=_['channel_id'],
+                name=_['name'],
+                application_id=_['application_id'],
+                webhook_token=_['token'],
+                avatar=_['avatar'],
+                token=ctx._token
+            )
+    return None
