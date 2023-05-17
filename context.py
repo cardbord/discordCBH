@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 import datetime
 import typing
-from warnings import warn
 from discord.utils import snowflake_time
 import errors
 import add_command as http
