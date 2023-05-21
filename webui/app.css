@@ -1,1 +1,10 @@
-.terminal textarea {font-size: 24px !important; font-family:monospace}
+.gradio-container {background-color: azure !important;}
+
+
+
+.terminal textarea {font-size: 15px !important; font-family:monospace;}
+#terminal-background {background-color: #181d39}
+
+
+
+.restart {font-size:30px !important; font-family:sans-serif}
