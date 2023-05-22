@@ -57,7 +57,3 @@ class create_webui:
     def launch(self):
         self.demo.queue().launch()
     
-
-
-x = create_webui()
-x.launch()
