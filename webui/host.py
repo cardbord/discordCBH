@@ -16,6 +16,7 @@ class create_webui:
 
     def restart(self):
         print("This is a test")
+        self.terminal += "restart bot command run \n"
 
     def retrieve_terminal(self):
         return self.terminal
@@ -28,30 +29,40 @@ class create_webui:
             with gr.Tab("Bot Management"):
                 with gr.Row():
                     btn = gr.Button("Restart bot",elem_id="restart",elem_classes="restart")
+                if self.show_guilds:
+                
+                    if self.guilds != None:
+                        with gr.Row():
+                            guildarr = []
+                            for guild in self.guilds:
+                                temp = _guild_but(guild)        
+                                guildarr.append(temp)
+                                with gr.Row():
+                                    
+                                    with gr.Column(scale=1):
+                                        gr.Image(value=(guild.icon.url[:len(guild.icon.url)-4]+"64"),elem_classes="imwrap",elem_id="imwrap")
+                                    with gr.Column():
+                                        gr.Textbox(label="Guild information",value=f"""{guild.name}
+{guild.id}
+{len(guild.members)} online members""",elem_id="guild-background",elem_classes="guild-info")
+                                    with gr.Column():
+                                        temp.button = gr.Button(">")
+                                
+
+                            #guilds are a pain, figure out how to implement later
+                
             with gr.Tab("Terminal"):
-                terminal = gr.TextArea(label="Terminal",value="discordCBH output terminal",elem_id="terminal-background",elem_classes="terminal")    
-            if self.show_guilds:
-                if self.guilds != None:
-                    guildarr = []
-                    for guild in self.guilds:
-
-                        temp = _guild_but(guild)
-                        temp.button = gr.Button(guild.name)
-                        guildarr.append(temp)
-
-                        #guilds are a pain, figure out how to implement later
+                terminal = gr.TextArea(label="Terminal",value="discordCBH output terminal",elem_id="terminal-background",elem_classes="terminal",lines=42)    
+            
+            
 
             
             btn.click(self.restart)
 
             d.load(self.retrieve_terminal,None,terminal,every=1)
             
-
-
         
         return d
-    
-    
 
 
     def launch(self):
