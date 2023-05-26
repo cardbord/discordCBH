@@ -37,16 +37,21 @@ class create_webui:
                             for guild in self.guilds:
                                 temp = _guild_but(guild)        
                                 guildarr.append(temp)
-                                with gr.Row():
-                                    
-                                    with gr.Column(scale=1):
-                                        gr.Image(value=(guild.icon.url[:len(guild.icon.url)-4]+"64"),elem_classes="imwrap",elem_id="imwrap")
-                                    with gr.Column():
-                                        gr.Textbox(label="Guild information",value=f"""{guild.name}
-{guild.id}
-{len(guild.members)} online members""",elem_id="guild-background",elem_classes="guild-info")
-                                    with gr.Column():
-                                        temp.button = gr.Button(">")
+                                
+                                with gr.Box(visible=True):
+                                    with gr.Row():
+                                        
+                                        with gr.Column(scale=1):
+                                            gr.ImageMask(interactive=False,value=(guild.icon.url[:len(guild.icon.url)-4]+"64"),elem_classes="imwrap",elem_id="imwrap")
+                                        with gr.Column():
+                                            gr.Textbox(label="Guild information",value=f"""{guild.name}
+    {guild.id}
+    {len(guild.members)} online members
+    Owned by {guild.owner}
+    {guild.description}
+    """,elem_id="guild-background",elem_classes="guild-info")
+                                        with gr.Column():
+                                            temp.button = gr.Button(">")
                                 
 
                             #guilds are a pain, figure out how to implement later
@@ -67,4 +72,3 @@ class create_webui:
 
     def launch(self):
         self.demo.queue().launch()
-    
