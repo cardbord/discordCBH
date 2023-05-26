@@ -6,5 +6,8 @@
 #terminal-background {background-color: #181d39}
 
 
+.guild-info textarea {font-size:25px !important; font-family:sans-serif;}
+#guild-background {background-color:aliceblue}
 
 .restart {font-size:30px !important; font-family:sans-serif}
+.imwrap {block-size:50% !important;}
