@@ -1,4 +1,4 @@
-import gradio as gr, pathlib,asyncio
+import gradio as gr, pathlib,typing, discord
 path = pathlib.Path(__file__).parent
 blocks = gr.Blocks(css=str(path)+"/app.css")
 
@@ -8,7 +8,7 @@ class _guild_but:
         self.button = None
 
 class create_webui:
-    def __init__(self,*,show_guilds:bool=True,guilds:list=None):
+    def __init__(self,*,show_guilds:bool=True,guilds:typing.List[discord.Guild]):
         self.guilds = guilds
         self.terminal = ""
         self.show_guilds = show_guilds
