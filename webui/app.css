@@ -1,5 +1,5 @@
 .gradio-container {background-color: azure !important;}
-#guild-box {background-color:gray}
+#guild-box {background-color:rgb(33, 45, 61)}
 
 
 .terminal textarea {font-size: 15px !important; font-family:monospace;}
@@ -7,7 +7,8 @@
 
 
 .guild-info textarea {font-size:25px !important; font-family:sans-serif;}
-#guild-background {background-color:rgb(95, 88, 88)}
+#guild-background {background-color:rgb(27, 37, 50)}
+.guild-description textarea {font-size:15px !important; font-family:Arial}
 
 .restart {font-size:30px !important; font-family:sans-serif}
 .imwrap {block-size:50% !important;}

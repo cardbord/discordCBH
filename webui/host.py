@@ -49,9 +49,8 @@ class create_webui:
                                         with gr.Column():
                                             gr.Textbox(label="Guild information",value=f"""{guild.name}
     {guild.id}
-    {len(guild.members)} online members
-    Owned by {guild.owner}
-    {guild.description}
+    {guild.member_count} members, {len(guild.members)} active
+    {guild.description if guild.description != None else ""}
     """,elem_id="guild-background",elem_classes="guild-info")
                                         with gr.Column():
                                             temp.button = gr.Button(">")
