@@ -91,19 +91,17 @@ class Button:
     emoji(PartialEmoji) = emoji to display on the button
     url(str) = (only required if style is 5), any URL 
     disabled(bool) = whether the button is disabled or not
+    custom_id(str) = the ID of the button
     """
 
 
-    def __init__(self,style:int=1,label:str="",emoji:PartialEmoji=None,disabled:bool=False,url:str=None):
+    def __init__(self,style:int=1,label:str="",emoji:PartialEmoji=None,disabled:bool=False,url:str=None,custom_id:str=None):
         self.style = style
         self.label = label
         self.emoji = emoji
         self.disabled = disabled
         self.url = url
-
-    @property
-    def custom_id(self) -> str:
-        return str(uuid.uuid4())
+        self.custom_id = custom_id if custom_id else str(uuid.uuid4())
 
     @property
     def button_json(self) -> dict:
@@ -136,6 +134,16 @@ def create_button(style:int=1,label:str=None,emoji:PartialEmoji=None,custom_id:s
     returns json for a button
 
     deprecated, please use ``Button`` instead.
+
+    returns a button component
+
+    params:
+    style(int) = the style of the button, can be found here https://discord.com/developers/docs/interactions/message-components#buttons 
+    label(str) = label on the button
+    emoji(PartialEmoji) = emoji to display on the button
+    url(str) = (only required if style is 5), any URL 
+    disabled(bool) = whether the button is disabled or not
+    custom_id(str) = the ID of the button
 
     '''
     
