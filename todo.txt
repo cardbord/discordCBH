@@ -10,6 +10,8 @@ DONE!
 
 What we have to do:
 
+-Currently trying to fix active members on the webUI, I think I've almost got it
+
 3. make commands
     -function decorator 'command', wraps functs and allat
     -i'll just borrow syntax from catchers extdpy module because thats pretty snazzy
