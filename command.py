@@ -1,4 +1,4 @@
-import context,datetime,asyncio, errors,uuid
+import context,datetime,asyncio, errors,uuid,typing
 
 class DiscordCommand:
     def __init__(self,command,**kwargs):
@@ -15,4 +15,10 @@ class DiscordCommand:
         self.type = kwargs.get('type') or 1
         self.id = kwargs.get('type') or uuid.uuid4()
 
-#make  wrap function too
+
+
+
+def Command(*,name:str=None,description:str=None,guild_ids:typing.List[int],options:typing.List[dict]):
+    def wrap(cmd):
+        return DiscordCommand(cmd,name,description,guild_ids,options)
+    return wrap
