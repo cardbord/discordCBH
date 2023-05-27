@@ -1,4 +1,4 @@
-import gradio as gr, pathlib,typing, discord
+import gradio as gr, pathlib,typing, discord, asyncio
 path = pathlib.Path(__file__).parent
 blocks = gr.Blocks(css=str(path)+"/app.css")
 
@@ -74,4 +74,10 @@ class create_webui:
 
 
     def launch(self):
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+        
         self.demo.queue().launch()
