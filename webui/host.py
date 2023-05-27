@@ -42,7 +42,10 @@ class create_webui:
                                     with gr.Row():
                                         
                                         with gr.Column(scale=1):
-                                            gr.ImageMask(interactive=False,value=(guild.icon.url[:len(guild.icon.url)-4]+"64"),elem_classes="imwrap",elem_id="imwrap")
+                                            if guild.icon.url:
+                                                gr.ImageMask(interactive=False,value=(guild.icon.url[:len(guild.icon.url)-4]+"64"),elem_classes="imwrap",elem_id="imwrap")
+                                            else:
+                                                gr.TextArea(value="no image found")
                                         with gr.Column():
                                             gr.Textbox(label="Guild information",value=f"""{guild.name}
     {guild.id}
