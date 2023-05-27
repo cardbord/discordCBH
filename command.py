@@ -15,7 +15,3 @@ class DiscordCommand:
         self.type = kwargs.get('type') or 1
         self.id = kwargs.get('type') or uuid.uuid4()
 
-
-
-
-
