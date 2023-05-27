@@ -67,7 +67,7 @@ class create_webui:
             
             btn.click(self.restart)
 
-            d.load(self.retrieve_terminal,None,terminal,every=1)
+            gr.load(self.retrieve_terminal,None,terminal,every=1)
             
         
         return d
