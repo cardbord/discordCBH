@@ -16,7 +16,7 @@ class DiscordCommand:
         self.id = kwargs.get('type') or uuid.uuid4()
 
 
-    async def invoke(self,ctx:context.Context):
+    async def invoke(self,ctx:context.Context,*args,**kwargs):
         def wrap_invoke(ctx:context.Context,funct):
             @functools.wraps(funct)
             async def wrapped(*args,**kwargs):
@@ -24,14 +24,12 @@ class DiscordCommand:
                     works = await funct(*args,**kwargs)
                 except:
                     failed = True
-                return None if failed else works
+                return works
             return wrapped
         
             
         comm_to_run = wrap_invoke(ctx,self.funct)
-        await comm_to_run(#think i need to add ctx.parameters here, oops
-        )
-                    
+        await comm_to_run(*args,**kwargs)
 
 
 
