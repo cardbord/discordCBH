@@ -84,3 +84,4 @@ class create_webui:
 
     def write(self,value:str):
         self.terminal+=value+'\n'
+
