@@ -12,7 +12,6 @@ class Context:
                  _http:http.DiscordRequest,
                  _command_json:dict,
                  _discord_client:typing.Union[discord.Client,commands.Bot],
-                 log
                  ):
         self._http = _http
         self._full_command_json = _command_json
@@ -22,7 +21,6 @@ class Context:
         self.interaction_id = _command_json["id"]
         self.time_created_at: datetime.datetime = snowflake_time(int(self.interaction_id))
         self.bot = _discord_client
-        self._log = log
         self.responded = False
         self.deferred = False
         self.values = _command_json["data"]["values"] if "values" in _command_json else None
