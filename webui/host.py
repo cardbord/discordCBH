@@ -1,4 +1,5 @@
 import gradio as gr, pathlib,typing, discord, asyncio
+
 path = pathlib.Path(__file__).parent
 blocks = gr.Blocks(css=str(path)+"/app.css", title="CBH webUI")
 
@@ -8,7 +9,7 @@ class _guild_but:
         self.button = None
 
 class create_webui:
-    def __init__(self,*,show_guilds:bool=True,guilds:typing.List[discord.Guild]):
+    def __init__(self,*,show_guilds:bool=True,guilds:typing.List[discord.Guild]=None):
         self.guilds = guilds
         self.terminal = ""
         self.show_guilds = show_guilds
@@ -80,3 +81,6 @@ class create_webui:
             asyncio.set_event_loop(loop)
         
         self.demo.queue().launch()
+
+    def write(self,value:str):
+        self.terminal+=value+'\n'
