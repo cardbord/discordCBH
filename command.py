@@ -1,4 +1,4 @@
-import context,datetime,asyncio, errors,uuid,typing
+import context,datetime,asyncio, errors,uuid,typing,functools
 
 class DiscordCommand:
     def __init__(self,command,**kwargs):
@@ -14,6 +14,25 @@ class DiscordCommand:
         self.guild_ids = kwargs.get('guild_ids')
         self.type = kwargs.get('type') or 1
         self.id = kwargs.get('type') or uuid.uuid4()
+
+
+    async def invoke(self,ctx:context.Context):
+        def wrap_invoke(ctx:context.Context,funct):
+            @functools.wraps(funct)
+            async def wrapped(*args,**kwargs):
+                try:
+                    works = await funct(*args,**kwargs)
+                except:
+                    failed = True
+                return None if failed else works
+            return wrapped
+        
+            
+        comm_to_run = wrap_invoke(ctx,self.funct)
+        await comm_to_run(#think i need to add ctx.parameters here, oops
+        )
+                    
+
 
 
 
