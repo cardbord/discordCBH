@@ -23,7 +23,10 @@ class DiscordCommand:
                 try:
                     works = await funct(*args,**kwargs)
                 except:
-                    failed = True
+                    ctx.command_failed = True
+                finally:
+                    if ctx.command_failed:
+                        pass #make a terminal error raiser
                 return works
             return wrapped
         
