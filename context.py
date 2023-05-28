@@ -22,7 +22,7 @@ class Context:
         self.time_created_at: datetime.datetime = snowflake_time(int(self.interaction_id))
         self.bot = _discord_client
         self.responded = False
-        self.deferred = False
+        self.command_failed = False
         self.values = _command_json["data"]["values"] if "values" in _command_json else None
         self.guild_id = int(_command_json["guild_id"]) if "guild_id" in _command_json.keys() else None
         self.author_id = int(_command_json["user"]["id"])  if "member" in _command_json.keys() else None
