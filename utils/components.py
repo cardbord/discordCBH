@@ -1,5 +1,6 @@
-import uuid
+import uuid,typing
 from ..errors import IncorrectFormat
+from enum import IntEnum
 '''Text inputs deprecated in favour of dPY's version. Please read dPY's
 documentation on how to implement them.
 
@@ -68,6 +69,16 @@ async def blurple_and_danger(ctx):
 
 '''
 
+class ButtonType(IntEnum):
+    blue = 1
+    standard = 1
+    blurple = 1
+    green = 3
+    red = 4
+    danger = 4
+    URL = 5
+
+
 class PartialEmoji:
     '''
     Represents an emoji
@@ -86,7 +97,7 @@ class Button:
     r"""returns a button component
 
     params:
-    style(int) = the style of the button, can be found here https://discord.com/developers/docs/interactions/message-components#buttons 
+    style(int) = the style of the button, can be found here https://discord.com/developers/docs/interactions/message-components#buttons, or use ButtonType 
     label(str) = label on the button
     emoji(PartialEmoji) = emoji to display on the button
     url(str) = (only required if style is 5), any URL 
@@ -95,7 +106,13 @@ class Button:
     """
 
 
-    def __init__(self,style:int=1,label:str="",emoji:PartialEmoji=None,disabled:bool=False,url:str=None,custom_id:str=None):
+    def __init__(self,
+                 style:typing.Union[ButtonType,int]=1,
+                 label:str="Button",
+                 emoji:PartialEmoji=None,
+                 disabled:bool=False,
+                 url:str=None,
+                 custom_id:str=None):
         self.style = style
         self.label = label
         self.emoji = emoji
@@ -128,8 +145,15 @@ class Button:
     
     def __repr__(self):
         return self.button_json
+    
 
-def create_button(style:int=1,label:str=None,emoji:PartialEmoji=None,custom_id:str=None,url:str=None,disabled:bool=False) -> Button:
+
+def create_button(style:typing.Union[ButtonType,int]=1,
+                  label:str="Button",
+                  emoji:PartialEmoji=None,
+                  custom_id:str=None,
+                  url:str=None,
+                  disabled:bool=False) -> Button:
     '''
     returns json for a button
 
