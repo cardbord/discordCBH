@@ -14,3 +14,7 @@ class HTTPError(CommandError):
     """
     The command request failed
     """
+class CommandInvokeError(CommandError):
+    """
+    The command invoke has failed
+    """
