@@ -70,6 +70,9 @@ async def blurple_and_danger(ctx):
 '''
 
 class ButtonType(IntEnum):
+    '''
+    Represents a button style
+    '''
     blue = 1
     standard = 1
     blurple = 1
@@ -82,7 +85,6 @@ class ButtonType(IntEnum):
 class PartialEmoji:
     '''
     Represents an emoji
-    
     '''
     def __init__(self,name,emoji_id,animated):
         self.name = name
@@ -94,7 +96,7 @@ class PartialEmoji:
     
 class Button:
 
-    r"""returns a button component
+    r"""Represents a button component
 
     params:
     style(int) = the style of the button, can be found here https://discord.com/developers/docs/interactions/message-components#buttons, or use ButtonType 
@@ -192,9 +194,42 @@ def create_button(style:typing.Union[ButtonType,int]=1,
 
     return data
 
+class ActionRow:
+    
+    '''
+    Represents an action row to send within a message
+
+    params:
+    components(tuple) = components to store in the action row
+    '''
+    
+    
+    def __init__(self,*components):
+        self.components = components
+    
+    @property
+    def row_json(self) -> dict:
+        data = {'type':1}
+        if isinstance(self.components[0],list):
+            row = []
+            for item in self.components:
+                for comp in item:
+                    row.append(comp)
+            row=tuple(row)
+
+            data['components'] = row
+        data['components'] = self.components
+        
+    def __repr__(self):
+        return self.row_json
+    
+
+
 def actionrow(*components) -> dict:
 
     '''
+    deprecated, please use ``ActionRow`` instead.
+
     returns an actionrow to send within a message
     
     params:
