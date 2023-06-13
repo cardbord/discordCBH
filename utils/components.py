@@ -246,7 +246,7 @@ def actionrow(*components) -> dict:
 
 
     return data
-     
+
 def menucomponent(label:str,value:str,description:str,emoji:PartialEmoji=None) -> dict:
     '''
     returns a selectmenu choice
@@ -259,15 +259,75 @@ def menucomponent(label:str,value:str,description:str,emoji:PartialEmoji=None) -
 
     '''
 
-    return {
+    data = {
         "label":label,
         "value":value,
-        "description":description,
-        "emoji":emoji,
+        "description":description
     }
+    if emoji:
+        data['emoji'] = emoji
+    return data
+
+
+class SelectMenu:
+
+    '''
+    Represents a select menu to send within an action row
+
+    params:
+    placeholder(str) = the placeholder on the selectmenu
+    min_values(int) = the minimum options a user can select
+    max_values(int) = the maximum options a user can select
+    custom_id(str) = the custom ID for the menu
+    choices = all choices to send within the selectmenu
+
+    
+    '''
+
+    def __init__(self,placeholder:str,min_values:int=1,max_values:int=10,disabled:bool=False,custom_id:str=None,*choices):
+        self.placeholder = placeholder
+        self.min_values = min_values
+        self.max_values = max_values
+        self.disabled = disabled
+        self.custom_id = custom_id or str(uuid.uuid4())
+        self.choices = choices
+        self.options = list(self.choices)
+
+    @property
+    def selectmenu_json(self) -> dict:
+        row = []
+        for item in self.options:
+            row.append(item)
+        data = {
+            "type":3,
+            "options":row,
+            "placeholder":self.placeholder,
+            "min_values":self.min_values,
+            "max_values":self.max_values,
+            "custom_id":self.custom_id,
+            "disabled":self.disabled
+
+        }
+        return data
+    
+
+    def __repr__(self):
+        return self.selectmenu_json
+    
+    def add_choice(self,label:str,value:str,description:str,emoji:PartialEmoji=None):
+        self.options.append({
+            "label":label,
+            "value":value,
+            "description":description,
+            "emoji":emoji if emoji else None
+        })
+
+
 
 def selectmenu(placeholder:str,min_values:int=1,max_values:int=10,disabled:bool=False,custom_id:str=None,*choices) -> dict:
     '''
+    deprecated, please use ``SelectMenu`` instead.
+
     placeholder(str) = the placeholder on the selectmenu
     min_values(int) = the minimum options a user can select
     max_values(int) = the maximum options a user can select
