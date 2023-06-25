@@ -23,12 +23,12 @@ class DiscordCommand:
             async def wrapped(*args,**kwargs):
                 try:
                     works = await funct(*args,**kwargs)
-                except:
+                except Exception as e:
                     ctx.command_failed = True
                 finally:
                     if ctx.command_failed:
-                        #raise error here
-                        self.client.webui.retrieve_terminal()
+                        self.client.webui.write(f"""{self.name} raised an error:
+                        {e}""")
                 return works
             return wrapped
         
