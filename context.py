@@ -5,13 +5,14 @@ import typing
 from discord.utils import snowflake_time
 import errors
 import add_command as http
+import client
 
 
 class Context:
     def __init__(self,
                  _http:http.DiscordRequest,
                  _command_json:dict,
-                 _discord_client:typing.Union[discord.Client,commands.Bot],
+                 _discord_client:client.Client,
                  ):
         self._http = _http
         self._full_command_json = _command_json
@@ -61,16 +62,6 @@ class Context:
         """
 
         return self.guild.voice_client if self.guild!=None else None
-    
-    @property
-    def me(self) -> typing.Union[discord.Member, discord.ClientUser]:
-        """
-        Bot member instance of the command invoke.
-        Will return ``discord.Member`` normally.
-        If the command was invoked in a DM, then this is ``discord.ClientUser``
-        """
-
-        return self.guild.me if self.guild != None else self.bot.user
     
     async def send(self,
                 content:str="",
