@@ -1,6 +1,6 @@
 import context,datetime,asyncio, errors,uuid,typing,functools
 from client import Client
-
+import errors
 class DiscordCommand:
     def __init__(self,command,client:Client,**kwargs):
 
@@ -29,6 +29,8 @@ class DiscordCommand:
                     if ctx.command_failed:
                         self.client.webui.write(f"""{self.name} raised an error:
                         {e}""")
+                        raise errors.CommandInvokeError(f"""{self.name} raised an error:
+                                                        {e}""")
                 return works
             return wrapped
         
