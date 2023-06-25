@@ -42,9 +42,8 @@ class webhook:
 
     '''
 
-    def __init__(self,id,type,guild_id,channel_id,name,application_id,webhook_token,avatar,token):
+    def __init__(self,id:int,guild_id,channel_id,name,application_id,webhook_token,avatar,token):
         self.webhook_id = id
-        self.webook_type = type
         self.channel_id = channel_id
         self.name = name
         self.application_id = application_id
@@ -56,15 +55,15 @@ class webhook:
 
 
 
-    async def execute(self,*,content:str,username:str=None, avatar_url:str):
-        client = aiohttp.ClientSession()
+    async def execute(self,*,content:str,username:str=None, avatar_url:str=None):
+        client = aiohttp.ClientSession()# <- use DiscordHTTPGateway.__httpsession for this later!
         if username is None:
             username = self.name
         url = f"https://discord.com/api/v9/webhooks/{self.webhook_id}/{self.token}"
         headers = {"Authorization": f"Bot {self.client_token}"}
         json = {'content':content,
-        'username':username,
-        'avatar_url':avatar_url
+        'username':username if username else self.name,
+        'avatar_url':avatar_url if avatar_url else self.avatar
         }
         async with client.post(url,headers=headers,json=json) as session:
             if session.status in range(200,299):
@@ -72,7 +71,7 @@ class webhook:
                 return
             
             await client.close()
-            raise HTTPError(f"command failed with code {session.status}")
+            raise HTTPError(f"command failed with code {session.status}")#<- make actual response messages later!
             
             
             
