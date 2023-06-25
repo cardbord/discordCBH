@@ -8,6 +8,7 @@ class Client(discord.Client):
                 **options
                  ):
         super().__init__(intents,**options)
+        self._current_commands = []
 
     def create_webui_overwritten(self,show_guids:bool=True,guilds:typing.List[discord.Guild]=None):
        '''alternative creation of webui that can be used before `Client.run` or replacing a current webui
@@ -24,6 +25,7 @@ class Client(discord.Client):
         token = token.strip()
         #make login function here
         #then we make a connect function
+        #then make guild reqs for webui (if with_webui)
 
 
 
