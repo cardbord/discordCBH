@@ -83,5 +83,6 @@ class create_webui:
         self.demo.queue().launch()
 
     def write(self,value:str):
-        self.terminal+=value+'\n'
+        self.terminal+='\n'+value
 
+    
