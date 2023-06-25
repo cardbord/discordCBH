@@ -1,13 +1,14 @@
 import json, typing, discord, aiohttp
 from discord.ext import commands
 from discord.http import Route
+import client
 
 class DiscordRequest:
     def __init__(self,
                  _discord_client,
                  application_id
                  ):
-        self._discord_client:typing.Union[discord.Client,commands.Bot] = _discord_client
+        self._discord_client:client.Client = _discord_client
         self.application_id = application_id
 
     @property
