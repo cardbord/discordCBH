@@ -1,7 +1,14 @@
-import json, typing, discord, aiohttp
+import json, typing, discord, aiohttp, asyncio
 from discord.ext import commands
 from discord.http import Route
 import client
+
+class DiscordHTTPGateway:
+    def __init__(self,token,loop=None):
+        __httpsession = aiohttp.ClientSession()
+        _token = token
+        _loop = asyncio.get_event_loop() if loop is None else loop
+
 
 class DiscordRequest:
     def __init__(self,
