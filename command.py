@@ -1,7 +1,8 @@
 import context,datetime,asyncio, errors,uuid,typing,functools
+from client import Client
 
 class DiscordCommand:
-    def __init__(self,command,**kwargs):
+    def __init__(self,command,client:Client,**kwargs):
 
         if not asyncio.iscoroutinefunction(command):
             raise errors.IncorrectType(f"Provided function {command} is not asynchronous, please convert to a coroutine.")
@@ -14,7 +15,7 @@ class DiscordCommand:
         self.guild_ids = kwargs.get('guild_ids')
         self.type = kwargs.get('type') or 1
         self.id = kwargs.get('type') or uuid.uuid4()
-
+        self.client = client
 
     async def invoke(self,ctx:context.Context,*args,**kwargs):
         def wrap_invoke(ctx:context.Context,funct):
@@ -26,7 +27,8 @@ class DiscordCommand:
                     ctx.command_failed = True
                 finally:
                     if ctx.command_failed:
-                        pass #make a terminal error raiser
+                        #raise error here
+                        self.client.webui.retrieve_terminal()
                 return works
             return wrapped
         
@@ -38,7 +40,14 @@ class DiscordCommand:
 
 
 
-def Command(*,name:str=None,description:str=None,guild_ids:typing.List[int],options:typing.List[dict]):
+def Command(*,name:str=None,client:Client,description:str=None,guild_ids:typing.List[int],options:typing.List[dict]):
+    '''
+    deprecated, please use ``Client.Command()`` instead.
+
+    alternative method for command creation, requiring discord client as a parameter instead. 
+    
+    '''
+
     def wrap(cmd):
-        return DiscordCommand(cmd,name,description,guild_ids,options)
+        return DiscordCommand(cmd,client,name,description,guild_ids,options)
     return wrap
