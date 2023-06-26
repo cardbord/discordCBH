@@ -32,9 +32,9 @@ from ..client import Client
 from enum import IntEnum
 
 class WebhookType(IntEnum):
-    INCOMING = 1
-    CHANNEL_FOLLOWER = 2
-    APPLICATION = 3
+    incoming = 1
+    channel_follower = 2
+    application = 3
 
 class webhook:
     '''Represents a discord webhook
