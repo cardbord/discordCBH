@@ -1,4 +1,5 @@
 import discord,typing,asyncio
+import networks
 from webui.host import create_webui
 from discord.ext import commands
 from command import DiscordCommand
@@ -62,3 +63,8 @@ class Client(discord.Client):
           return DiscordCommand(cmd,self,name,description,guild_ids,options)
       return wrap
     
+    async def add_network(self,network:networks.Network):
+       await network._assign_network_client(self)
+       for command in network._network_commands:
+          self._current_commands.append(command)
+        
