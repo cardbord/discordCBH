@@ -69,10 +69,10 @@ class webhook:
         }
         async with self._client_session.post(url,headers=headers,json=json) as session:
             if session.status in range(200,299):
-                await self._client_session.close()
+                
                 return
             
-            await self._client_session.close()
+            
             raise HTTPException(f"command failed with code {session.status}")#<- make actual response messages later!
             
             
@@ -85,10 +85,10 @@ class webhook:
         json = {'content':content}
         async with self._client_session.patch(url,headers=headers,json=json) as session:
             if session.status in range(200,299):
-                await self._client_session.close()
+                
                 return
             
-            await self._client_session.close()
+            
             raise HTTPException(f"command failed with code {session.status}")
 
     async def delete_message(self,*,message_id:int):
@@ -97,10 +97,10 @@ class webhook:
         headers = {"Authorization": f"Bot {self.client_token}"}
         async with self._client_session.delete(url,headers=headers) as session:
             if session.status == 204:
-                await self._client_session.close()
+                
                 return
             
-            await self._client_session.close()
+            
             raise HTTPException(f"command failed with code {session.status}")
             
 
@@ -131,7 +131,7 @@ class webhook:
             if session.status in range(200,299):
                 webhook_status = await session.text()
                 webhook_status = eval(webhook_status.replace('null','None').replace('true','True'))
-                await self._client_session.close()
+                
                 return webhook(
                     id=webhook_status['id'],
                     type=webhook_status['type'],
@@ -146,7 +146,6 @@ class webhook:
 
 
             
-            await self._client_session.close()
             raise HTTPException(f"command failed with code {session.status}")
 
 
