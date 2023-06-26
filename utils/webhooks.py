@@ -26,7 +26,7 @@ exist, or may not be included in the library.
 """
 
 import aiohttp, requests, typing
-from errors import HTTPError
+from errors import HTTPException
 from ..context import Context
 from ..client import Client
 
@@ -73,7 +73,7 @@ class webhook:
                 return
             
             await self._client_session.close()
-            raise HTTPError(f"command failed with code {session.status}")#<- make actual response messages later!
+            raise HTTPException(f"command failed with code {session.status}")#<- make actual response messages later!
             
             
             
@@ -89,7 +89,7 @@ class webhook:
                 return
             
             await self._client_session.close()
-            raise HTTPError(f"command failed with code {session.status}")
+            raise HTTPException(f"command failed with code {session.status}")
 
     async def delete_message(self,*,message_id:int):
         self._client_session = aiohttp.ClientSession()
@@ -101,7 +101,7 @@ class webhook:
                 return
             
             await self._client_session.close()
-            raise HTTPError(f"command failed with code {session.status}")
+            raise HTTPException(f"command failed with code {session.status}")
             
 
 
@@ -147,7 +147,7 @@ class webhook:
 
             
             await self._client_session.close()
-            raise HTTPError(f"command failed with code {session.status}")
+            raise HTTPException(f"command failed with code {session.status}")
 
 
 
@@ -180,7 +180,7 @@ async def get_webhook(ctx:Context,webhook_id:int) -> typing.Optional[webhook]:
             token=ctx._token
         )
     
-    raise HTTPError(f"command failed with code {r.status_code}")
+    raise HTTPException(f"command failed with code {r.status_code}")
 
 
 
@@ -215,7 +215,7 @@ async def create_webhook(ctx:Context,client:Client,*,channel_id:int,webhook_name
 
         
         
-        raise HTTPError(f"command failed with code {session.status}")         
+        raise HTTPException(f"command failed with code {session.status}")         
 
 
 async def delete_webhook(ctx:Context,client:Client,*,webhook_id:int):
@@ -232,7 +232,7 @@ async def delete_webhook(ctx:Context,client:Client,*,webhook_id:int):
             return
         
         
-        raise HTTPError(f"command failed with code {session.status}") 
+        raise HTTPException(f"command failed with code {session.status}") 
 
 
 
@@ -246,7 +246,7 @@ async def get_channel_webhooks(ctx:Context,*,channel_id:int)-> typing.Optional[l
     if r.status_code in range(200,299):
         return eval(r.text.replace('null','None').replace('true','True'))
     
-    raise HTTPError(f"command failed with code {r.status_code}")
+    raise HTTPException(f"command failed with code {r.status_code}")
 
 async def get_guild_webhooks(ctx:Context,*,guild_id:int)-> typing.Optional[list]:
 
@@ -257,7 +257,7 @@ async def get_guild_webhooks(ctx:Context,*,guild_id:int)-> typing.Optional[list]
     r=requests.get(f"https://discord.com/api/v9/guilds/{guild_id}/webhooks",headers=headers)
     if r.status_code in range(200,299):
         return eval(r.text.replace('null','None').replace('true','True'))
-    raise HTTPError(f"command failed with code {r.status_code}")
+    raise HTTPException(f"command failed with code {r.status_code}")
 
 async def webhook_from_name(ctx:Context,*,channel_id:int,webhook_name:str)-> typing.Optional[webhook]:  
     

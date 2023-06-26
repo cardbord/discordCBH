@@ -29,7 +29,7 @@ class DiscordCommand:
                     if ctx.command_failed:
                         self.client.webui.write(f"""{self.name} raised an error:
                         {e}""")
-                        raise errors.CommandInvokeError(f"""{self.name} raised an error:
+                        raise errors.CommandInvokeException(f"""{self.name} raised an error:
                                                         {e}""")
                 return works
             return wrapped
