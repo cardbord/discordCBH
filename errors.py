@@ -1,20 +1,24 @@
-class CommandError(Exception):
+class DiscordException(Exception):
     """
     Base class of all exceptions
     """
-class IncorrectType(CommandError):
+class IncorrectType(DiscordException):
     """
     The object type was incorrect
     """
-class IncorrectFormat(CommandError):
+class IncorrectFormat(DiscordException):
     """
     The object format was incorrect
     """
-class HTTPError(CommandError):
+class HTTPException(DiscordException):
     """
-    The command request failed
+    The HTTP request failed
     """
-class CommandInvokeError(CommandError):
+class ClientException(DiscordException):
+    """
+    An exception occured within the client
+    """
+class CommandInvokeException(ClientException):
     """
     The command invoke has failed
     """
