@@ -53,7 +53,7 @@ class webhook:
         self.token = webhook_token
         self.avatar = avatar
         self.client_token = token
-        self._client_session = self.client.http.__httpsession
+        self._client_session = self.client.dcHTTP.__httpsession
 
 
 
