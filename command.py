@@ -14,7 +14,7 @@ class DiscordCommand:
         self.options = kwargs.get('options') or None
         self.guild_ids = kwargs.get('guild_ids')
         self.type = kwargs.get('type') or 1
-        self.id = kwargs.get('type') or uuid.uuid4()
+        self.id = kwargs.get('id') or uuid.uuid4()
         self.client = client;self.client._current_commands+=self
 
     async def invoke(self,ctx:context.Context,*args,**kwargs):
