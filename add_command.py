@@ -5,9 +5,13 @@ import client
 
 class DiscordHTTPGateway:
     def __init__(self,token,loop=None):
-        __httpsession = aiohttp.ClientSession()
-        _token = token
-        _loop = asyncio.get_event_loop() if loop is None else loop
+        self.__httpsession = None #init through _create_dcHTTPgateway_session()
+        self._token = token
+        self._loop = asyncio.get_event_loop() if loop is None else loop
+
+    async def _create_dcHTTPgateway_session(self):
+        self.__httpsession = aiohttp.ClientSession(connector=None)
+        #maybe create some token checking here like discord.py does?
 
 
 class DiscordRequest:
