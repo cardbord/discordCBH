@@ -1,4 +1,4 @@
-import discord,typing,asyncio,testmodule
+import discord,typing,asyncio
 from webui.host import create_webui
 from discord.ext import commands
 from command import DiscordCommand
