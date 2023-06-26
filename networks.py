@@ -2,9 +2,9 @@ from client import Client
 import asyncio,errors,functools,context,uuid,typing
 
 class Network:
-    def __init__(self,name):
+    def __init__(self,name:str=None):
         self.client = None #assigned with _assign_network_client executed by Client's network assignment function 
-        self.name = name
+        self.name = name if name else "network"+str(uuid.uuid4())
         self._network_commands = []
         
 
@@ -27,7 +27,7 @@ class Network:
             self.options = kwargs.get('options') or None
             self.guild_ids = kwargs.get('guild_ids')
             self.type = kwargs.get('type') or 1
-            self.id = kwargs.get('id') or uuid.uuid4()
+            self.id = kwargs.get('id') or str(uuid.uuid4())
             self.client = None
             
 
