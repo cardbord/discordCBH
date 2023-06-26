@@ -29,6 +29,12 @@ import aiohttp, requests, typing
 from errors import HTTPException
 from ..context import Context
 from ..client import Client
+from enum import IntEnum
+
+class WebhookType(IntEnum):
+    INCOMING = 1
+    CHANNEL_FOLLOWER = 2
+    APPLICATION = 3
 
 class webhook:
     '''Represents a discord webhook
@@ -43,7 +49,7 @@ class webhook:
 
     '''
 
-    def __init__(self,id:int,guild_id:int,channel_id:int,name:str,application_id:int,webhook_token:str,avatar:str,token:str,client:Client):
+    def __init__(self,id:int,type:int,guild_id:int,channel_id:int,name:str,application_id:int,webhook_token:str,avatar:str,token:str,client:Client):
         self.webhook_id = id
         self.client = client
         self.channel_id = channel_id
@@ -53,6 +59,7 @@ class webhook:
         self.token = webhook_token
         self.avatar = avatar
         self.client_token = token
+        self.type = type
         self._client_session = self.client.dcHTTP.__httpsession
 
 
@@ -130,7 +137,7 @@ class webhook:
         async with self._client_session.post(url,headers=headers,json=json) as session:
             if session.status in range(200,299):
                 webhook_status = await session.text()
-                webhook_status = eval(webhook_status.replace('null','None').replace('true','True'))
+                webhook_status = eval(webhook_status.replace('null','None').replace('true','True').replace('false','False'))
                 
                 return webhook(
                     id=webhook_status['id'],
@@ -145,12 +152,28 @@ class webhook:
 
 
 
-            
             raise HTTPException(f"command failed with code {session.status}")
 
+    @classmethod
+    async def from_id(cls,ctx:Context,webhook_id:int):
+        headers = {"Authorization":f"Bot {ctx._token}"}
+        r = requests.get(f"https://discord.com/api/v9/webhooks/{webhook_id}",headers=headers)
+        if r.status_code in range(200,299):
+            webhook_status = await r.text()
+            webhook_status = eval(webhook_status.replace('null',None).replace('true','True').replace('false','False'))
 
-
-
+            return cls(
+            id=webhook_status['id'],
+            type=webhook_status['type'],
+            guild_id=webhook_status['guild_id'],
+            channel_id=webhook_status['channel_id'],
+            name=webhook_status['name'],
+            avatar=webhook_status['avatar'],
+            application_id=webhook_status['application_id'],
+            webhook_token=webhook_status['token'],
+            token=ctx._token
+        )
+        raise HTTPException(f"command failed with code {r.status_code}")
 
         
 
@@ -165,7 +188,7 @@ async def get_webhook(ctx:Context,webhook_id:int) -> typing.Optional[webhook]:
     r=requests.get(f"https://discord.com/api/v9/webhooks/{webhook_id}",headers=headers)
     if r.status_code in range(200,299):
         webhook_status = await r.text()
-        webhook_status = eval(webhook_status.replace('null','None').replace('true','True'))
+        webhook_status = eval(webhook_status.replace('null','None').replace('true','True').replace('false','False'))
         
         return webhook(
             id=webhook_status['id'],
@@ -183,7 +206,7 @@ async def get_webhook(ctx:Context,webhook_id:int) -> typing.Optional[webhook]:
 
 
 
-async def create_webhook(ctx:Context,client:Client,*,channel_id:int,webhook_name:str) -> typing.Optional[webhook]:
+async def create_webhook(ctx:Context,client:Client,*,channel_id:int,webhook_name:str,webhook_avatar:str=None) -> typing.Optional[webhook]:
 
     '''Creates a webhook from a provided channel ID and webhook name
     returns a webhook class on success'''
@@ -192,12 +215,12 @@ async def create_webhook(ctx:Context,client:Client,*,channel_id:int,webhook_name
     url = f"https://discord.com/api/v9/channels/{channel_id}/webhooks"
     headers = {"Authorization": f"Bot {ctx._token}"}
     json = {'name':webhook_name,
-    'avatar?':None
+    'avatar?':webhook_avatar
     }
     async with client_session.post(url,headers=headers,json=json) as session:
         if session.status in range(200,299):
             webhook_status = await session.text()
-            webhook_status = eval(webhook_status.replace('null','None').replace('true','True'))
+            webhook_status = eval(webhook_status.replace('null','None').replace('true','True').replace('false','False'))
             
             return webhook(
                 id=webhook_status['id'],
@@ -243,7 +266,7 @@ async def get_channel_webhooks(ctx:Context,*,channel_id:int)-> typing.Optional[l
     headers = {"Authorization": f"Bot {ctx._token}"}
     r=requests.get(f"https://discord.com/api/v9/channels/{channel_id}/webhooks",headers=headers)
     if r.status_code in range(200,299):
-        return eval(r.text.replace('null','None').replace('true','True'))
+        return eval(r.text.replace('null','None').replace('true','True').replace('false','False'))
     
     raise HTTPException(f"command failed with code {r.status_code}")
 
@@ -255,7 +278,7 @@ async def get_guild_webhooks(ctx:Context,*,guild_id:int)-> typing.Optional[list]
     headers = {"Authorization": f"Bot {ctx._token}"}
     r=requests.get(f"https://discord.com/api/v9/guilds/{guild_id}/webhooks",headers=headers)
     if r.status_code in range(200,299):
-        return eval(r.text.replace('null','None').replace('true','True'))
+        return eval(r.text.replace('null','None').replace('true','True').replace('false','False'))
     raise HTTPException(f"command failed with code {r.status_code}")
 
 async def webhook_from_name(ctx:Context,*,channel_id:int,webhook_name:str)-> typing.Optional[webhook]:  
