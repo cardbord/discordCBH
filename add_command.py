@@ -1,17 +1,24 @@
-import json, typing, discord, aiohttp, asyncio
+import json, typing, discord, aiohttp, asyncio,sys
 from discord.ext import commands
 from discord.http import Route
 import client
+from globals import __version__
 
 class DiscordHTTPGateway:
     def __init__(self,token,loop=None):
         self.__httpsession = None #init through _create_dcHTTPgateway_session()
         self._token = token
         self._loop = asyncio.get_event_loop() if loop is None else loop
+        self.user_agent = f'DiscordBot (https://github.com/cardbord/discordCBH {__version__}) Python/{sys.version_info[0]}.{sys.version[1]} aiohttp/{aiohttp.__version__}'
 
     async def _create_dcHTTPgateway_session(self):
         self.__httpsession = aiohttp.ClientSession(connector=None)
         #maybe create some token checking here like discord.py does?
+
+    async def request(self,method:str,url:str,json:dict):
+        
+        async with self.__httpsession.request(method,url) as req:
+            pass #finish later
 
 
 class DiscordRequest:
