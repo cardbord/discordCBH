@@ -105,7 +105,7 @@ class DiscordCommand:
         self.type = kwargs.get('type') or AppCommandType.chat_input
         self.id = kwargs.get('id') or str(uuid.uuid4())
         self.client = client;self.client._current_commands+=self
-        self.nsfw = kwargs.get('nsfw')
+        self.nsfw = kwargs.get('nsfw') or False
 
     async def invoke(self,ctx:context.Context,*args,**kwargs):
         def wrap_invoke(ctx:context.Context,funct):
