@@ -15,7 +15,7 @@ class create_webui:
         self.show_guilds = show_guilds
         
 
-    def restart(self):
+    def restart(self,client): #will actually code sometime soon
         print("This is a test")
         self.terminal += "restart bot command run \n"
 
@@ -60,14 +60,14 @@ class create_webui:
                             #guilds are a pain, figure out how to implement later
                 
             with gr.Tab("Terminal"):
-                terminal = gr.TextArea(label="Terminal",value="discordCBH output terminal",elem_id="terminal-background",elem_classes="terminal",lines=42)    
+                self.grterminal = gr.TextArea(label="Terminal",value="discordCBH output terminal",elem_id="terminal-background",elem_classes="terminal",lines=42)    
             
             
 
             
             btn.click(self.restart)
 
-            d.load(self.retrieve_terminal,None,terminal,every=1)
+            d.load(self.retrieve_terminal,None,self.grterminal,every=60)
             
         
         return d
@@ -84,5 +84,8 @@ class create_webui:
 
     def write(self,value:str):
         self.terminal+='\n'+value
+        self.demo.load(self.retrieve_terminal,None,self.grterminal) 
+        #no clue if this method works but can't test now, remind me to test it later
 
-    
+    def update(self):
+        self.demo.load(self.retrieve_terminal,None,self.grterminal)
