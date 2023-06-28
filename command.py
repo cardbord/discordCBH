@@ -104,7 +104,7 @@ class DiscordCommand:
         self.guild_ids = kwargs.get('guild_ids')
         self.type = kwargs.get('type') or AppCommandType.chat_input
         self.id = kwargs.get('id') or str(uuid.uuid4())
-        self.client = client;self.client._current_commands+=self
+        self.client = client;self.client._append_checked_command(self)
         self.nsfw = kwargs.get('nsfw') or False
 
     async def invoke(self,ctx:context.Context,*args,**kwargs):
