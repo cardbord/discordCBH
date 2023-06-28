@@ -29,7 +29,7 @@ class Network:
             self.type = kwargs.get('type') or 1
             self.id = kwargs.get('id') or str(uuid.uuid4())
             self.client = None
-            
+            self.nsfw = kwargs.get('nsfw') or False
 
         async def invoke(self,ctx:context.Context,*args,**kwargs):
             def wrap_invoke(ctx:context.Context,funct):
@@ -52,13 +52,13 @@ class Network:
             comm_to_run = wrap_invoke(ctx,self.funct)
             await comm_to_run(*args,**kwargs)
 
-    def Command(self,*,name:str=None,description:str=None,guild_ids:typing.List[int],options:typing.List[dict]):
+    def Command(self,*,name:str=None,description:str=None,guild_ids:typing.List[int]=None,options:typing.List[dict]=None,nsfw:bool=False):
         '''
         Method of command creation within a network
         '''
 
         def wrap(cmd):
-            new_command = self.DiscordNetworkCommand(cmd,name,description,guild_ids,options)
+            new_command = self.DiscordNetworkCommand(cmd,name,description,guild_ids,options,nsfw=nsfw)
             self._network_commands.append(new_command)
             return new_command
         return wrap
