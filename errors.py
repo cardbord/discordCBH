@@ -42,3 +42,7 @@ class Forbidden(HTTPException):
     """
     The process is forbidden
     """
+class CommandCreationException(ClientException):
+    """
+    The command could not be registered/created successfully
+    """
