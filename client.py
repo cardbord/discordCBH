@@ -1,5 +1,6 @@
 import discord,typing,asyncio
 import networks
+import errors
 from webui.host import create_webui
 from discord.ext import commands
 from command import DiscordCommand
@@ -13,7 +14,21 @@ class Client(discord.Client):
         self._current_commands = []
         self.loop = asyncio.get_event_loop()
         self.dcHTTP = DiscordHTTPGateway(None,self.loop) #assign token in run()
-        
+
+    def _append_checked_command(self,command:typing.Union[networks.Network.DiscordNetworkCommand,DiscordCommand]):
+      """
+      used as a check for matching command names in _current_commands before finally appending.
+      don't use unless you're registering your command without using DiscordCommand or DiscordNetworkCommand 
+      """
+      c_names = []
+      for c in self._current_commands:
+        c_names.append(c.name)
+      if command.name in c_names:
+          raise errors.CommandCreationException(f"Command {command.name} has a matching name with an already registered command")
+      else:
+         self._current_commands.append(command)
+          
+
     def create_webui_overwritten(self,show_guids:bool=True,guilds:typing.List[discord.Guild]=None):
        '''alternative creation of webui that can be used before `Client.run` or replacing a current webui
        when created, webui will not be created again in `Client.run`'''
@@ -66,5 +81,5 @@ class Client(discord.Client):
     async def add_network(self,network:networks.Network):
        await network._assign_network_client(self)
        for command in network._network_commands:
-          self._current_commands.append(command)
+          self._append_checked_command(command)
         
