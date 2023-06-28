@@ -132,7 +132,7 @@ class DiscordCommand:
 
 
 
-def Command(*,name:str=None,client:Client,description:str=None,guild_ids:typing.List[int],options:typing.List[dict]):
+def Command(*,name:str=None,client:Client,description:str=None,guild_ids:typing.List[int]=None,options:typing.List[dict]=None,nsfw:bool):
     '''
     deprecated, please use ``Client.Command()`` instead.
 
@@ -141,5 +141,5 @@ def Command(*,name:str=None,client:Client,description:str=None,guild_ids:typing.
     '''
 
     def wrap(cmd):
-        return DiscordCommand(cmd,client,name,description,guild_ids,options)
+        return DiscordCommand(cmd,client,name=name,description=description,guild_ids=guild_ids,options=options,nsfw=nsfw)
     return wrap
