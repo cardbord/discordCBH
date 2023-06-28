@@ -37,3 +37,8 @@ class HTTPResponseException(IntEnum):
     bad_gateway = 502
     service_unavailable = 503
     gateway_timeout = 504
+
+class Forbidden(HTTPException):
+    """
+    The process is forbidden
+    """
