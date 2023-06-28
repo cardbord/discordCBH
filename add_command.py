@@ -1,8 +1,9 @@
-import json, typing, discord, aiohttp, asyncio,sys
+import json, typing, discord, aiohttp, asyncio,sys,requests
 from discord.ext import commands
 from discord.http import Route
 import client
 from globals import __version__
+import errors
 
 class DiscordHTTPGateway:
     def __init__(self,token,loop=None):
@@ -61,7 +62,18 @@ class DiscordRequest:
         url+=location
         return self._discord_client.http.request(Route(modify_method,url),**kwargs)
 
-
+    def add_global_slash_command(self,
+                                 cmdjson):
+        url = f"https://discord.com/api/v10/applications/{self.application_id}/commands"
+        headers = f'Bot {self._discord_client.dcHTTP._token}'
+        r = requests.post(url=url,data=cmdjson,headers=headers)
+        if r.status_code in range(200,299):
+            return
+        elif r.status_code == errors.HTTPResponseException.forbidden:
+            raise errors.Forbidden('This slash command cannot be added.')
+        else:
+            raise errors.HTTPException(f'command failed with code {r.status_code}')
+        
 
     def add_slash_command(self,
                             guild_id,
