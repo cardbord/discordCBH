@@ -1,4 +1,5 @@
 import asyncio,errors,functools,context,uuid,typing
+from command import _assign_coroutine_as_invoke
 
 class Network:
     '''
@@ -15,6 +16,9 @@ class Network:
         
 
     async def _assign_network_client(self,client):
+        """
+        Method of assigning a client to the network post init
+        """
         self.client = client
         for netzwerkcommand in self._network_commands:
             netzwerkcommand.client = client
@@ -36,6 +40,24 @@ class Network:
             self.id = kwargs.get('id') or str(uuid.uuid4())
             self.client = None
             self.nsfw = kwargs.get('nsfw') or False
+            self.__before_invoke = None
+            self.__after_invoke = None
+
+        async def before_invoke(self,coro):
+            """
+            Assigns a coroutine to be executed before the invoke of a command.
+            """
+            
+            self.__before_invoke = _assign_coroutine_as_invoke(coro,self)
+
+        async def post_invoke(self,coro):
+            """
+            Assigns a coroutine to be executed after the invoke of a command.
+            """
+
+            self.__after_invoke = _assign_coroutine_as_invoke(coro,self)
+
+
 
         async def invoke(self,ctx:context.Context,*args,**kwargs):
             def wrap_invoke(ctx:context.Context,funct):
@@ -56,7 +78,14 @@ class Network:
             
                 
             comm_to_run = wrap_invoke(ctx,self.funct)
+            if self.__before_invoke:
+                await self.__before_invoke()
+            
             await comm_to_run(*args,**kwargs)
+
+            if self.__after_invoke:
+                await self.__after_invoke()
+
 
         @property
         def _cmd_json(self):
@@ -82,3 +111,7 @@ class Network:
             self._network_commands.append(new_command)
             return new_command
         return wrap
+
+from testmodule.ext import commands
+commands.Cog.listener
+commands.Bot.listen
