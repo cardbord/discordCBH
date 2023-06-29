@@ -1,10 +1,16 @@
-from client import Client
 import asyncio,errors,functools,context,uuid,typing
 
 class Network:
+    '''
+    Multi-file management of commands.
+
+    After creating a network, `Network.Command()` returns a `DiscordNetworkCommand`, same as `DiscordCommand` except without a client attribute.
+    This is assigned during `Client.add_network()`
+
+    '''
     def __init__(self,name:str=None):
         self.client = None #assigned with _assign_network_client executed by Client's network assignment function 
-        self.name = name if name else "network"+str(uuid.uuid4())
+        self.name = name if name else self.__class__.__name__
         self._network_commands = []
         
 
@@ -51,6 +57,20 @@ class Network:
                 
             comm_to_run = wrap_invoke(ctx,self.funct)
             await comm_to_run(*args,**kwargs)
+
+        @property
+        def _cmd_json(self):
+            cmdjson = {"name":self.name,
+                        "description":self.description,
+                        "options":self.options or []
+                        }
+            if self.type:
+                cmdjson['type'] = self.type or 1
+            if self.nsfw!=False:
+                cmdjson['nsfw?'] = self.nsfw
+            return cmdjson
+
+
 
     def Command(self,*,name:str=None,description:str=None,guild_ids:typing.List[int]=None,options:typing.List[dict]=None,nsfw:bool=False):
         '''
