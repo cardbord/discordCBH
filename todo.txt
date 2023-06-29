@@ -2,7 +2,7 @@ DONE!
 1. Eat cheese
     -maintaining high calcium levels is important for bone structure
     -don't workout properly anyway so this is necessary
-2. make some sort of context management 
+2. make some sort of context management (may need to redo for interaction context, not sure though)
     -class, referenced in commands
     -contains user, server, channel, (if voice maybe if needed, need to read dc docs to see properly)
 
@@ -34,6 +34,9 @@ Halfway through doing:
         -server members
         -manage members
 
+7. make networks
+    -management of commands from multiple files 
+    -basically just compile functions together and then implement step 4
 
 
 
@@ -43,13 +46,10 @@ What we have to do:
 
 -Currently trying to fix active members on the webUI, I think I've almost got it
 
-7. make networks
-    -management of commands from multiple files 
-    -basically just compile functions together and then implement step 4
 8. testing fun!
     -will take a while lol
     -make a functioning bot using all basic commands
     -test localhost terminal
 
 OTHER IDEAS:
-webhooks.py (make http work more efficiently)
+None for now, all done! (will be adding more to utils soon though)
