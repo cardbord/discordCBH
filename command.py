@@ -5,6 +5,30 @@ from enum import IntEnum
 
 #THIS -> https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-structure
 
+async def _assign_coroutine_as_invoke(coro,command):
+        if not asyncio.iscoroutinefunction(coro):
+            raise errors.IncorrectType(f"Provided function {coro.__name__} is not asynchronous, please convert to a coroutine.")
+        def wrap_funct(funct):
+            @functools.wraps(funct)
+            async def wrapped():
+                failed = False
+                try:
+                    works = await funct()
+                except Exception as e:
+                    failed = True
+                finally:
+                    if failed:
+                        command.client.webui.write(f"""{command.name}'s pre/post-invoke command {coro.__name__} contains the exception
+                                                {e}
+                                                that cannot be resolved.""")
+                        raise errors.CommandCreationException(f"""{command.name}'s pre/post-invoke command {coro.__name__} contains the exception
+                                                            {e}
+                                                            that cannot be resolved.""")
+                return works
+            return wrapped
+        return wrap_funct(coro)
+
+
 class OptionType(IntEnum):
     subcommand = 1
     subcommand_group = 2
@@ -106,6 +130,26 @@ class DiscordCommand:
         self.id = kwargs.get('id') or str(uuid.uuid4())
         self.client = client;self.client._append_checked_command(self,0)
         self.nsfw = kwargs.get('nsfw') or False
+        self.__before_invoke = None
+        self.__after_invoke = None
+
+    
+
+
+
+    async def before_invoke(self,coro):
+        """
+        Assigns a coroutine to be executed before the invoke of a command.
+        """
+        
+        self.__before_invoke = _assign_coroutine_as_invoke(coro,self)
+
+    async def post_invoke(self,coro):
+        """
+        Assigns a coroutine to be executed after the invoke of a command.
+        """
+
+        self.__after_invoke = _assign_coroutine_as_invoke(coro,self)
 
     async def invoke(self,ctx:context.Context,*args,**kwargs):
         def wrap_invoke(ctx:context.Context,funct):
@@ -126,7 +170,13 @@ class DiscordCommand:
         
             
         comm_to_run = wrap_invoke(ctx,self.funct)
+        if self.__before_invoke:
+            await self.__before_invoke()
+        
         await comm_to_run(*args,**kwargs)
+        
+        if self.__after_invoke:
+            await self.__after_invoke()
 
     @property
     def _cmd_json(self):
