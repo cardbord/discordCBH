@@ -11,14 +11,16 @@ class Client(discord.Client):
                 **options
                  ):
         super().__init__(intents,**options)
-        self._current_commands = []
+        self._current_commands = [[]]
+        self.networks = []
         self.loop = asyncio.get_event_loop()
         self.dcHTTP = DiscordHTTPGateway(None,self.loop) #assign token in run()
 
-    def _append_checked_command(self,command:typing.Union[networks.Network.DiscordNetworkCommand,DiscordCommand]):
+    def _append_checked_command(self,command:typing.Union[networks.Network.DiscordNetworkCommand,DiscordCommand],position:int=0):
       """
       used as a check for matching command names in _current_commands before finally appending.
-      don't use unless you're registering your command without using DiscordCommand or DiscordNetworkCommand 
+      don't use unless you're registering your command without using DiscordCommand or DiscordNetworkCommand.
+      param position is unnecessary unless networks are used.
       """
       c_names = []
       for c in self._current_commands:
@@ -26,7 +28,7 @@ class Client(discord.Client):
       if command.name in c_names:
           raise errors.CommandCreationException(f"Command {command.name} has a matching name with an already registered command")
       else:
-         self._current_commands.append(command)
+         self._current_commands[position].append(command)
           
 
     def create_webui_overwritten(self,show_guids:bool=True,guilds:typing.List[discord.Guild]=None):
@@ -79,7 +81,13 @@ class Client(discord.Client):
       return wrap
     
     async def add_network(self,network:networks.Network):
-       await network._assign_network_client(self)
-       for command in network._network_commands:
-          self._append_checked_command(command)
+      """
+      A method for adding networks to the client
+      """
+
+
+      await network._assign_network_client(self)
+      self.networks.append((f"{network.name}",len(self.networks+1)))
+      for command in network._network_commands:
+        self._append_checked_command(command,self.networks[-1][1])
         
