@@ -104,7 +104,7 @@ class DiscordCommand:
         self.guild_ids = kwargs.get('guild_ids')
         self.type = kwargs.get('type') or AppCommandType.chat_input
         self.id = kwargs.get('id') or str(uuid.uuid4())
-        self.client = client;self.client._append_checked_command(self)
+        self.client = client;self.client._append_checked_command(self,0)
         self.nsfw = kwargs.get('nsfw') or False
 
     async def invoke(self,ctx:context.Context,*args,**kwargs):
@@ -128,7 +128,17 @@ class DiscordCommand:
         comm_to_run = wrap_invoke(ctx,self.funct)
         await comm_to_run(*args,**kwargs)
 
-
+    @property
+    def _cmd_json(self):
+        cmdjson = {"name":self.name,
+                    "description":self.description,
+                    "options":self.options or []
+                    }
+        if self.type:
+            cmdjson['type'] = self.type or 1
+        if self.nsfw!=False:
+            cmdjson['nsfw?'] = self.nsfw
+        return cmdjson
 
 
 
