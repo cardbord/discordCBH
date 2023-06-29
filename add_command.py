@@ -70,7 +70,7 @@ class DiscordRequest:
         if r.status_code in range(200,299):
             return
         elif r.status_code == errors.HTTPResponseException.forbidden:
-            raise errors.Forbidden('This slash command cannot be added.')
+            raise errors.HTTPException.Forbidden('This slash command cannot be added.')
         else:
             raise errors.HTTPException(f'command failed with code {r.status_code}')
         
