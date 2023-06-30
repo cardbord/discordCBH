@@ -111,7 +111,3 @@ class Network:
             self._network_commands.append(new_command)
             return new_command
         return wrap
-
-from testmodule.ext import commands
-commands.Cog.listener
-commands.Bot.listen
