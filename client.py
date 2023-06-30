@@ -66,7 +66,7 @@ class Client(discord.Client):
             if show_guilds:
               for guild in self.guilds:
                   guilds.append(guild)
-            self.webui = create_webui(show_guilds=show_guilds,guilds=guilds)
+            self.webui = create_webui(self,show_guilds=show_guilds,guilds=guilds)
           try: #method already run in webui.host.launch(), but we run it here too to ensure gradio doesn't throw any RuntimeErrors (it seems to differ for different devices)
             loop = asyncio.get_event_loop()
           except RuntimeError:
