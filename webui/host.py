@@ -9,13 +9,14 @@ class _guild_but:
         self.button = None
 
 class create_webui:
-    def __init__(self,*,show_guilds:bool=True,guilds:typing.List[discord.Guild]=None):
+    def __init__(self,client,*,show_guilds:bool=True,guilds:typing.List[discord.Guild]=None):
         self.guilds = guilds
         self.terminal = ""
         self.show_guilds = show_guilds
+        self.client = client # moved client here so that gradio doesn't complain about missing parameters
         
 
-    def restart(self,client): #will actually code sometime soon
+    def restart(self): #will actually code sometime soon
         print("This is a test")
         self.terminal += "restart bot command run \n"
 
