@@ -4,7 +4,7 @@
 #guild-box {background-color:rgb(33, 45, 61)}
 
 
-.terminal textarea {font-size: 15px !important; font-family:monospace;}
+.terminal textarea {font-size: 15px !important; font-family:monospace; outline:none !important; box-shadow:none !important;}
 #terminal-background {background-color: #181d39}
 
 

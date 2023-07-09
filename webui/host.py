@@ -23,6 +23,15 @@ class create_webui:
     def retrieve_terminal(self):
         return self.terminal
 
+    #def _retrieve_current_method(self):
+    #    
+    #    
+    #    
+    #    if len(self.__terminal_queue) > 0:
+    #        temp = self.__terminal_queue[0]
+    #        del self.__terminal_queue[0]
+   #         return temp
+
 
     @property
     def demo(self):
@@ -61,14 +70,14 @@ class create_webui:
                             #guilds are a pain, figure out how to implement later
                 
             with gr.Tab("Terminal"):
-                self.grterminal = gr.TextArea(label="Terminal",value="discordCBH output terminal",elem_id="terminal-background",elem_classes="terminal",lines=42)    
+                self.grterminal = gr.TextArea(label="Terminal",value="discordCBH output terminal",elem_id="terminal-background",elem_classes="terminal",lines=42,interactive=False)    
             
             
 
             
             btn.click(self.restart)
 
-            d.load(self.retrieve_terminal,None,self.grterminal,every=300)
+            d.load(self.retrieve_terminal,None,self.grterminal,every=1,show_progress=False)
             
         
         return d
@@ -81,7 +90,8 @@ class create_webui:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
         
-        self.demo.queue().launch()
+        self.demo.queue()
+        self.demo.launch()
 
     def write(self,value:str):
         self.terminal+='\n'+value
