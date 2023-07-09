@@ -100,7 +100,20 @@ class DiscordRequest:
             form.add_field(name,bru.fp,filename=bru.filename,content_type="application/octet-stream")
         
         return self.command_response(token,True,modify_method,data=form,files=files,location=location)
-    
+
+    def _get_global_slash_commands(self,
+                                   with_locals:bool=False):
+        url = f'https://discord.com/api/v10/applications/{self.application_id}/commands'
+        headers = f'Bot {self._discord_client.dcHTTP._token}'
+        if with_locals:
+            data = {"with_localizations?":True}
+            r = requests.get(url=url,data=data,headers=headers)
+        else:
+            r = requests.get(url=url,headers=headers)
+        if r.status_code in range(200,299):
+            return r.text
+
+
     
     
     def post_initial_response(self,_resp,interaction_id,token):
