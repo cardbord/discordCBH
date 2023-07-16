@@ -21,17 +21,7 @@ class create_webui:
         self.terminal += "restart bot command run \n"
 
     def retrieve_terminal(self):
-        return self.terminal
-
-    #def _retrieve_current_method(self):
-    #    
-    #    
-    #    
-    #    if len(self.__terminal_queue) > 0:
-    #        temp = self.__terminal_queue[0]
-    #        del self.__terminal_queue[0]
-   #         return temp
-
+        return self.terminal #we have to deal with terminal refresh issue, it comes as standard in gradio
 
     @property
     def demo(self):
@@ -95,8 +85,4 @@ class create_webui:
 
     def write(self,value:str):
         self.terminal+='\n'+value
-        self.demo.load(self.retrieve_terminal,None,self.grterminal) 
-        #no clue if this method works but can't test now, remind me to test it later
 
-    def update(self):
-        self.demo.load(self.retrieve_terminal,None,self.grterminal)
