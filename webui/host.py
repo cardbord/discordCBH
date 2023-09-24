@@ -1,4 +1,4 @@
-import gradio as gr, pathlib,typing, discord, asyncio
+import gradio as gr, pathlib,typing, discord, asyncio, time
 
 path = pathlib.Path(__file__).parent
 blocks = gr.Blocks(css=str(path)+"/app.css", title="CBH webUI")
@@ -9,16 +9,21 @@ class _guild_but:
         self.button = None
 
 class create_webui:
-    def __init__(self,client,*,show_guilds:bool=True,guilds:typing.List[discord.Guild]=None):
+    def __init__(self,client,*,show_guilds:bool=True,guilds:typing.List[discord.Guild]=None,token=""):
         self.guilds = guilds
         self.terminal = ""
         self.show_guilds = show_guilds
         self.client = client # moved client here so that gradio doesn't complain about missing parameters
+        self.token = token
         
 
-    def restart(self): #will actually code sometime soon
-        print("This is a test")
+    async def restart(self): #will actually code sometime soon
+        print("Restarting bot...")
         self.terminal += "restart bot command run \n"
+        await self.client.close()
+        time.sleep(2)
+        self.client.run(self.token)
+        
 
     def retrieve_terminal(self):
         return self.terminal
