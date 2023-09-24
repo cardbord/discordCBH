@@ -88,10 +88,10 @@ class create_webui:
             loop = asyncio.get_event_loop()
         except RuntimeError:
             loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
         
-        self.demo.queue()
-        self.demo.launch()
+        asyncio.set_event_loop(loop)
+        
+        self.demo.queue().launch()
 
     def write(self,value:str):
         self.terminal+='\n'+value
