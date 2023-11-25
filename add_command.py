@@ -4,11 +4,12 @@ from discord.http import Route
 import client
 from globals import __version__
 import errors
-
+from command import DiscordCommand
 class DiscordHTTPGateway:
-    def __init__(self,token,loop=None):
+    def __init__(self,token,client:client.Client,loop=None):
         self.__httpsession = None #init through _create_dcHTTPgateway_session()
         self._token = token
+        self.client = client
         self._loop = asyncio.get_event_loop() if loop is None else loop
         self.user_agent = f'DiscordBot (https://github.com/cardbord/discordCBH {__version__}) Python/{sys.version_info[0]}.{sys.version[1]} aiohttp/{aiohttp.__version__}'
 
@@ -20,6 +21,29 @@ class DiscordHTTPGateway:
         
         async with self.__httpsession.request(method,url) as req:
             pass #finish later
+
+    async def _call_initial_command_post(self):
+        reqs = DiscordRequest(self.client,self.client.application_id)
+        current_commands_registered:list[dict] = reqs._get_global_slash_commands()
+        
+        client_registered = self.client._current_commands
+
+        to_register = []
+        #find commands not mentioned at all, delete them
+        #register them
+        client_registered:list[DiscordCommand]
+        for network in client_registered:
+            for command in network:
+                found = False
+                for command_registered_at_discord in current_commands_registered:
+                    command:DiscordCommand
+                    if command._cmd_json.get('name') == command_registered_at_discord.get('name'): 
+                        if command._cmd_json
+
+                    
+                    
+
+
 
 
 class DiscordRequest:
@@ -62,6 +86,10 @@ class DiscordRequest:
         url+=location
         return self._discord_client.http.request(Route(modify_method,url),**kwargs)
 
+    
+    
+    
+    
     def add_global_slash_command(self,
                                  cmdjson):
         url = f"https://discord.com/api/v10/applications/{self.application_id}/commands"
@@ -104,7 +132,7 @@ class DiscordRequest:
     def _get_global_slash_commands(self,
                                    with_locals:bool=False):
         url = f'https://discord.com/api/v10/applications/{self.application_id}/commands'
-        headers = f'Bot {self._discord_client.dcHTTP._token}'
+        headers = {'Authorization' :f'Bot {self._discord_client.dcHTTP._token}'}
         if with_locals:
             data = {"with_localizations?":True}
             r = requests.get(url=url,data=data,headers=headers)

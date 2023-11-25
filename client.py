@@ -2,7 +2,6 @@ import discord,typing,asyncio
 import networks
 import errors
 from webui.host import create_webui
-from discord.ext import commands
 from command import DiscordCommand
 from add_command import  DiscordHTTPGateway
 class Client(discord.Client):
@@ -14,7 +13,7 @@ class Client(discord.Client):
         self._current_commands = [[]]
         self.networks = []
         self.loop = asyncio.get_event_loop()
-        self.dcHTTP = DiscordHTTPGateway(None,self.loop) #assign token in run()
+        self.dcHTTP = DiscordHTTPGateway(None,self,self.loop) #assign token in run()
 
     def _append_checked_command(self,command:typing.Union[networks.Network.DiscordNetworkCommand,DiscordCommand],position:int=0):
       """
