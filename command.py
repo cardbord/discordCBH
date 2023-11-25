@@ -191,6 +191,8 @@ class DiscordCommand:
         return cmdjson
 
 
+    def __repr__(self):
+        return self._cmd_json
 
 def Command(*,name:str=None,client:Client,description:str=None,guild_ids:typing.List[int]=None,options:typing.List[dict]=None,nsfw:bool):
     '''
