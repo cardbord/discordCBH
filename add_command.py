@@ -38,7 +38,8 @@ class DiscordHTTPGateway:
                 for command_registered_at_discord in current_commands_registered:
                     command:DiscordCommand
                     if command._cmd_json.get('name') == command_registered_at_discord.get('name'): 
-                        if command._cmd_json
+                        if command._cmd_json:
+                            pass
 
                     
                     
