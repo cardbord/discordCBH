@@ -157,13 +157,16 @@ class DiscordCommand:
             async def wrapped(*args,**kwargs):
                 try:
                     works = await funct(*args,**kwargs)
+                    if self.client.webui:
+                        self.client.webui.write(f"{datetime.datetime.now()}: Command {self.name} run")
                 except Exception as e:
                     ctx.command_failed = True
                 finally:
                     if ctx.command_failed:
-                        self.client.webui.write(f"""{self.name} raised an error:
+                        if self.client.webui:
+                            self.client.webui.write(f"""{self.name} raised an error:
                         {e}""")
-                        raise errors.CommandInvokeException(f"""{self.name} raised an error:
+                        raise errors.CommandInvokeException(f"""{datetime.datetime.now()}: {self.name} raised an error:
                                                         {e}""")
                 return works
             return wrapped
