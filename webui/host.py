@@ -23,11 +23,6 @@ class create_webui:
         #await self.client.close()
         #time.sleep(2)
         #await self.client.run(self.token)
-        
-    def terminalWrite(self,command):
-        print("Command run")
-        theString = "Command " + command + "run \n"
-        self.terminal += theString
 
     def retrieve_terminal(self):
         return self.terminal #we have to deal with terminal refresh issue, it comes as standard in gradio
