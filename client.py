@@ -11,6 +11,7 @@ class Client(discord.Client):
                  ):
         super().__init__(intents,**options)
         self._current_commands = [[]]
+        self.__current_command_names = []
         self.networks = []
         self.loop = asyncio.get_event_loop()
         self.dcHTTP = DiscordHTTPGateway(None,self,self.loop) #assign token in run()
@@ -21,13 +22,12 @@ class Client(discord.Client):
       don't use unless you're registering your command without using DiscordCommand or DiscordNetworkCommand.
       param position is unnecessary unless networks are used.
       """
-      c_names = []
-      for c in self._current_commands:
-        c_names.append(c.name)
-      if command.name in c_names:
+      
+      if command.name in self.__current_command_names:
           raise errors.CommandCreationException(f"Command {command.name} has a matching name with an already registered command")
       else:
          self._current_commands[position].append(command)
+         self.__current_command_names.append(command.name)
           
 
     def create_webui_overwritten(self,show_guids:bool=True,guilds:typing.List[discord.Guild]=None):
@@ -87,6 +87,6 @@ class Client(discord.Client):
 
       await network._assign_network_client(self)
       self.networks.append((f"{network.name}",len(self.networks+1)))
+      self._current_commands.append([])
       for command in network._network_commands:
-        self._append_checked_command(command,self.networks[-1][1])
-        
+        self._append_checked_command(command,len(self.networks)-1)
