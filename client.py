@@ -86,7 +86,7 @@ class Client(discord.Client):
 
 
       await network._assign_network_client(self)
-      self.networks.append((f"{network.name}",len(self.networks+1)))
+      self.networks.append((f"{network.name}",len(self.networks)+1))
       self._current_commands.append([])
       for command in network._network_commands:
         self._append_checked_command(command,len(self.networks)-1)
