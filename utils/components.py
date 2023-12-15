@@ -218,8 +218,10 @@ class ActionRow:
             row=tuple(row)
 
             data['components'] = row
-        data['components'] = self.components
-        
+        else:
+            data['components'] = self.components
+        return data
+
     def __repr__(self):
         return self.row_json
     
