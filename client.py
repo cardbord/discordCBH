@@ -25,15 +25,17 @@ class Client(discord.Client):
       
       if command.name in self.__current_command_names:
           raise errors.CommandCreationException(f"Command {command.name} has a matching name with an already registered command")
+      elif command.description == None or len(command.description) == 0 or len(command.description) >= 100:
+          raise errors.CommandCreationException(f"Command {command.name} has an invalid description. Please check that your description of length {len(command.description) if command.description else 0} is between 1 and 100.")
       else:
-         self._current_commands[position].append(command)
-         self.__current_command_names.append(command.name)
+        self._current_commands[position].append(command)
+        self.__current_command_names.append(command.name)
           
 
     def create_webui_overwritten(self,show_guids:bool=True,guilds:typing.List[discord.Guild]=None):
-       '''alternative creation of webui that can be used before `Client.run` or replacing a current webui
-       when created, webui will not be created again in `Client.run`'''
-       self.webui = create_webui(show_guilds=show_guids,guilds=guilds)
+      '''alternative creation of webui that can be used before `Client.run` or replacing a current webui
+      when created, webui will not be created again in `Client.run`'''
+      self.webui = create_webui(show_guilds=show_guids,guilds=guilds)
 
     def run(self, #overriding run() is sketch, but should work
           token:str,

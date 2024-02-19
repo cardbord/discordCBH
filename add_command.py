@@ -31,15 +31,43 @@ class DiscordHTTPGateway:
         to_register = []
         #find commands not mentioned at all, delete them
         #register them
-        client_registered:list[DiscordCommand]
+        client_registered:list[DiscordCommand] #typing
         for network in client_registered:
             for command in network:
-                found = False
-                for command_registered_at_discord in current_commands_registered:
+                if command in current_commands_registered: #will add updates too
+                    for cmd_registered in current_commands_registered:
+                        if command.name == cmd_registered['name']:
+                            for n_dict_item in command._cmd_json:
+                                if not cmd_registered.get(n_dict_item):
+                                    cmd_guids = command._cmd_json.get("guild_ids")
+                                    if cmd_guids:
+                                        for guild_id in cmd_guids:
+                                            reqs.add_slash_command(guild_id,cmd_name,command.description,command.options,None)
+                                    else:
+                                        reqs.add_global_slash_command(command._cmd_json)
+
+                                elif not command._cmd_json[n_dict_item] == cmd_registered[n_dict_item]:
+                                    cmd_guids = command._cmd_json.get("guild_ids")
+                                    if cmd_guids:
+                                        for guild_id in cmd_guids:
+                                            reqs.add_slash_command(guild_id,cmd_name,command.description,command.options,None)
+                                    else:    
+                                        reqs.add_global_slash_command(command._cmd_json)
+                                else:
+                                    pass #this command is the same! no need to send a post to update.    
+                else:
                     command:DiscordCommand
-                    if command._cmd_json.get('name') == command_registered_at_discord.get('name'): 
-                        if command._cmd_json:
-                            pass
+                    cmd_name = command._cmd_json.get("name")
+                    cmd_guids = command._cmd_json.get("guild_ids")
+                    if cmd_guids:
+                        for guild_id in cmd_guids:
+                            reqs.add_slash_command(guild_id,cmd_name,command.description,command.options,None) #none for now, will include context later
+                    else:
+                        reqs.add_global_slash_command(command._cmd_json)
+                
+                
+                
+                
 
                     
                     
