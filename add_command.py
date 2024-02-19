@@ -39,17 +39,8 @@ class DiscordHTTPGateway:
                     for cmd_registered in current_commands_registered:
                         if command.name == cmd_registered['name']:
                             for n_dict_item in command._cmd_json:
-                                if not cmd_registered.get(n_dict_item):
-                                    cmd_guids = command._cmd_json.get("guild_ids")
-                                    
-                                    registered.append(command.name)
-                                    if cmd_guids:
-                                        for guild_id in cmd_guids:
-                                            reqs.add_slash_command(guild_id,cmd_name,command.description,command.options,None)
-                                    else:
-                                        reqs.add_global_slash_command(command._cmd_json)
-
-                                elif not command._cmd_json[n_dict_item] == cmd_registered[n_dict_item]:
+                                
+                                if (not cmd_registered.get(n_dict_item)) or (not command._cmd_json[n_dict_item] == cmd_registered[n_dict_item]):
                                     registered.append(command.name)
                                     cmd_guids = command._cmd_json.get("guild_ids")
                                     if cmd_guids:
