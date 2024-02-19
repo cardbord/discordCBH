@@ -28,7 +28,8 @@ class DiscordHTTPGateway:
         
         client_registered = self.client._current_commands
 
-        to_register = []
+        registered = []
+
         #find commands not mentioned at all, delete them
         #register them
         client_registered:list[DiscordCommand] #typing
@@ -40,6 +41,8 @@ class DiscordHTTPGateway:
                             for n_dict_item in command._cmd_json:
                                 if not cmd_registered.get(n_dict_item):
                                     cmd_guids = command._cmd_json.get("guild_ids")
+                                    
+                                    registered.append(command.name)
                                     if cmd_guids:
                                         for guild_id in cmd_guids:
                                             reqs.add_slash_command(guild_id,cmd_name,command.description,command.options,None)
@@ -47,6 +50,7 @@ class DiscordHTTPGateway:
                                         reqs.add_global_slash_command(command._cmd_json)
 
                                 elif not command._cmd_json[n_dict_item] == cmd_registered[n_dict_item]:
+                                    registered.append(command.name)
                                     cmd_guids = command._cmd_json.get("guild_ids")
                                     if cmd_guids:
                                         for guild_id in cmd_guids:
@@ -64,9 +68,16 @@ class DiscordHTTPGateway:
                             reqs.add_slash_command(guild_id,cmd_name,command.description,command.options,None) #none for now, will include context later
                     else:
                         reqs.add_global_slash_command(command._cmd_json)
+                    registered.append(command.name)
                 
-                
-                
+        for possible_deleted in current_commands_registered:
+            if not possible_deleted["name"] in registered:
+                if possible_deleted["guild_ids"]:
+                    for guild_id in cmd_guids:
+                        reqs.delete_slash_command(command_id=possible_deleted['id'],guild_id=guild_id)
+                else:
+                    reqs.delete_slash_command(command_id=possible_deleted["id"])
+            
                 
 
                     
@@ -170,7 +181,8 @@ class DiscordRequest:
         if r.status_code in range(200,299):
             return r.text
 
-
+    def delete_slash_command(self,command_id,guild_id=None):
+        return self.send_http(modify_method="DELETE",guild_id=guild_id,location=command_id)
     
     
     def post_initial_response(self,_resp,interaction_id,token):
